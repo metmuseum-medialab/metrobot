@@ -10,8 +10,8 @@ String textToSend;
 ArrayList<Signature> arrSignature = new ArrayList<Signature>();
 
 //App Size
-final int APP_WIDTH = 900;
-final int APP_HEIGHT = 800;
+final int APP_WIDTH = 825;
+final int APP_HEIGHT = 500;
 
 final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
@@ -45,7 +45,7 @@ float zLift = 10;  //distance to lift between drawings
 
 void setup() 
 {
-  size(900, 800);
+  size(825, 500);
 
   if (MODE_TESTING)
   {

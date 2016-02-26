@@ -3,7 +3,7 @@ class PreviewView {
  
   ArrayList<ArrayList<PVector>> arrDrawings = new ArrayList<ArrayList<PVector>>();  //store our drawing in this arraylist
   
-  int drawingBorder = 10;
+  int drawingBorder = 0;
   
   PVector vPreviewSpace;
   int topX, topY, bottomX, bottomY;
