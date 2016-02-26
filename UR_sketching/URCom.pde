@@ -15,7 +15,7 @@ class URCom {
   float v = 50; //the speed of our tool in mm/s
   float zone = 1; //the blend radius of our tool in mm
   float scaledV = .1; //the speed of our tool in m/s
-  float scaledZone = .0001; //the blend radius of our tool in m
+  float scaledZone = .0051; //the blend radius of our tool in m
   Pose [] moveLBuffer; //an array of movements that we store to send a chunk all at once
 
   URCom(String comType) { //construct in either testing or serial mode

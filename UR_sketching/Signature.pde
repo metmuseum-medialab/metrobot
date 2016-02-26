@@ -8,7 +8,7 @@ class Signature {
   ArrayList<PVector> previewSketchPoints = new ArrayList<PVector>();
   ArrayList<PVector> robotSketchPoints = new ArrayList<PVector>();
   
-  float DEFAULT_PREVIEW_SCALE = .3;
+  float DEFAULT_PREVIEW_SCALE = 1.0;
 
   Signature(ArrayList<PVector> _sketchPoints) {
 
@@ -20,9 +20,7 @@ class Signature {
     
     for (int i=0;i<sketchPoints.size();i++)
     {
-      if (MODE_SCALE_OUTPUT == true)
-      {
-        previewSketchPoints.add(
+       previewSketchPoints.add(
          new PVector(
            _v.x+int(sketchPoints.get(i).x*DEFAULT_PREVIEW_SCALE*_scale),
            _v.y+int(sketchPoints.get(i).y*DEFAULT_PREVIEW_SCALE*_scale)
@@ -34,19 +32,6 @@ class Signature {
            _v.x + int(sketchPoints.get(i).x*_scale) + vRobotDrawingOffset.x,
            _v.y + int(sketchPoints.get(i).y*_scale) + vRobotDrawingOffset.y
          )); 
-      }
-      else 
-      {
-         previewSketchPoints.add(
-         new PVector(
-           int(sketchPoints.get(i).x),int(sketchPoints.get(i).y))
-         );   
-       
-         robotSketchPoints.add(
-         new PVector(
-           int(sketchPoints.get(i).x+vRobotDrawingOffset.x),int(sketchPoints.get(i).y+vRobotDrawingOffset.y))
-         ); 
-      }
     }
   }
 
