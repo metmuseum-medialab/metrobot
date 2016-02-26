@@ -9,13 +9,10 @@ class PreviewView {
   int topX, topY, bottomX, bottomY;
   
   PreviewView(PVector _drawingSpace) {
-    
-    int _newX = APP_WIDTH - drawingBorder*2;
-println("*** " + APP_WIDTH + " " + _newX);
-
-    vPreviewSpace = new PVector(_newX,_newX*_drawingSpace.y/_drawingSpace.x);
  
-    topX = drawingBorder ; 
+    vPreviewSpace = new PVector(_drawingSpace.x, _drawingSpace.y);
+ 
+    topX = drawingBorder; 
     topY = drawingBorder; 
     bottomX = drawingBorder + int(vPreviewSpace.x); 
     bottomY = drawingBorder + int(vPreviewSpace.y);
@@ -35,7 +32,7 @@ println("*** " + APP_WIDTH + " " + _newX);
   void drawPreview() {
 
     strokeWeight(3);
-    rect(drawingBorder,drawingBorder,vPreviewSpace.x,vPreviewSpace.y);
+    rect(drawingBorder,drawingBorder,vPreviewSpace.x + drawingBorder,vPreviewSpace.y + drawingBorder);
     
     strokeWeight(1);
     noFill();
@@ -44,7 +41,7 @@ println("*** " + APP_WIDTH + " " + _newX);
     {
       beginShape();
       for (int j=0; j<arrDrawings.get(i).size(); j++) {
-         vertex(arrDrawings.get(i).get(j).x, -1*(arrDrawings.get(i).get(j).y-APP_HEIGHT) );
+         vertex(arrDrawings.get(i).get(j).x + drawingBorder, -1*(arrDrawings.get(i).get(j).y-APP_HEIGHT) + drawingBorder);
       }
       endShape();
     }

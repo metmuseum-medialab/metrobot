@@ -10,14 +10,17 @@ String textToSend;
 ArrayList<Signature> arrSignature = new ArrayList<Signature>();
 
 //App Size
-final int APP_WIDTH = 800;
-final int APP_HEIGHT = 600;
+final int APP_WIDTH = 900;
+final int APP_HEIGHT = 800;
 
 final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
+final boolean MODE_SCALE_OUTPUT = false;
 
 //Define the Robot drawing space. Currently i'm just using an arbitrary aspect ratio, and use it to define the preview space
-PVector vRobotDrawingSpace = new PVector(4,3);
+PVector vRobotDrawingSpace = new PVector(825,500);
+PVector vRobotDrawingOffset = new PVector(-100,110);
+
 PreviewView _previewView = new PreviewView(vRobotDrawingSpace);
 
 //=================================NETWORKING DATA===========================================================================
@@ -42,7 +45,7 @@ float zLift = 10;  //distance to lift between drawings
 
 void setup() 
 {
-  size(800, 600);
+  size(900, 800);
 
   if (MODE_TESTING)
   {
@@ -117,7 +120,7 @@ void keyPressed() {
         
         //Find random point and scale in preview area
         PVector _v = _previewView.getRandomPoint();
-        float _s = .5 + random(1);
+        float _s = 1; //.5 + random(1);
         
         //We first call a funciton to conform the signature points in robot and preview space for the 
         // given parameters: location, scale, rotation
@@ -196,6 +199,9 @@ void sendPointsToUR(ArrayList<PVector> _sketchPoints)
   ///ADD ALL THE ACTUAL SKETCH POINTS TO OUR POSE ARRAY
   for(int i = 0; i< _sketchPoints.size(); i++){ //for each point in our arraylist
     Pose target = new Pose();//creat a new target pose
+    
+    println("Sketch points sent : " + _sketchPoints.get(i).x + "," + _sketchPoints.get(i).y);
+    
     target.fromTargetAndGuide(_sketchPoints.get(i), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
     //ur.moveL(target);
     poseArray[i+1] = target;

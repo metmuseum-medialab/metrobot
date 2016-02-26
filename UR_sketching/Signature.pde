@@ -20,19 +20,33 @@ class Signature {
     
     for (int i=0;i<sketchPoints.size();i++)
     {
-       previewSketchPoints.add(
+      if (MODE_SCALE_OUTPUT == true)
+      {
+        previewSketchPoints.add(
          new PVector(
            _v.x+int(sketchPoints.get(i).x*DEFAULT_PREVIEW_SCALE*_scale),
            _v.y+int(sketchPoints.get(i).y*DEFAULT_PREVIEW_SCALE*_scale)
          )
-       );   
+         );   
        
-       robotSketchPoints.add(
+         robotSketchPoints.add(
          new PVector(
-           _v.x+int(sketchPoints.get(i).x*DEFAULT_PREVIEW_SCALE*_scale),
-           _v.y+int(sketchPoints.get(i).y*DEFAULT_PREVIEW_SCALE*_scale)
-         )
-       ); 
+           _v.x + int(sketchPoints.get(i).x*_scale) + vRobotDrawingOffset.x,
+           _v.y + int(sketchPoints.get(i).y*_scale) + vRobotDrawingOffset.y
+         )); 
+      }
+      else 
+      {
+         previewSketchPoints.add(
+         new PVector(
+           int(sketchPoints.get(i).x),int(sketchPoints.get(i).y))
+         );   
+       
+         robotSketchPoints.add(
+         new PVector(
+           int(sketchPoints.get(i).x+vRobotDrawingOffset.x),int(sketchPoints.get(i).y+vRobotDrawingOffset.y))
+         ); 
+      }
     }
   }
 
