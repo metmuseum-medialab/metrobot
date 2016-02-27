@@ -25,6 +25,11 @@ class GoalDrawing {
     image(goalImg, 0, 0);
   }
 
+  MarkOrientation getSignatureLocation(Signature sig) {
+    // TODO
+    return new MarkOrientation(new PVector(0,0), 1.0, 0.0);
+  }
+
   void pointsToDraw() {
     println("hey");
     goalImg.loadPixels();

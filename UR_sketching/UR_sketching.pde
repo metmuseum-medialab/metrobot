@@ -13,7 +13,7 @@ ArrayList<Signature> arrSignature = new ArrayList<Signature>();
 final int APP_WIDTH = 825;
 final int APP_HEIGHT = 500;
 
-final boolean MODE_TESTING = false;
+final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
 
 //Define the Robot drawing space. Currently i'm just using an arbitrary aspect ratio, and use it to define the preview space
@@ -143,27 +143,18 @@ void keyPressed() {
         println(arrSignature.size());
     }
   }
-  if (key == 'g') { // do stuff
+  if (key == 'p') { // place a signature
+
     if (arrSignature.size() > 0) {
-        _goalDrawing.pointsToDraw();
 
-    //Pop out of Queue and Draw Preview
-        
-        //Find random point and scale in preview area
-        PVector _v = _previewView.getRandomPoint();
-        float _s = 1; //.5 + random(1);
+        // choose a signature
+        Signature sig = arrSignature.get(0); 
 
-        println(_v);
-        
-        //We first call a funciton to conform the signature points in robot and preview space for the 
-        // given parameters: location, scale, rotation
-        arrSignature.get(0).setSignaturePoints(_v, _s, random(360));
-        
-        //Now we can send these points to the robot
-        sendPointsToUR(arrSignature.get(0).robotSketchPoints);
-        
-        //Now we can add these points to the preview
-        _previewView.addSignature(arrSignature.get(0).previewSketchPoints);
+        // using goaldrawing, generate a 'markorientation' - location, orientation, rotation
+        MarkOrientation mk = _goalDrawing.getSignatureLocation(sig); // TODO
+
+        // send points to UR for generating a mark
+        sendPointsToUR(sig.generateRobotMark(mk)); // TODO
         
     }
   }

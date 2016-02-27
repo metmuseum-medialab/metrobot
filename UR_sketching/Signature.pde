@@ -35,4 +35,8 @@ class Signature {
     }
   }
 
+  ArrayList<PVector> generateRobotMark(MarkOrientation mk) {
+    return new ArrayList<PVector>();
+    // TODO
+  }
 }
