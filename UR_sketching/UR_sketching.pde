@@ -20,6 +20,10 @@ final boolean MODE_QUEUE = true;
 PVector vRobotDrawingSpace = new PVector(825,500);
 PVector vRobotDrawingOffset = new PVector(-100,110);
 
+final int SIGNATURE_SIZE = 200;
+PVector vSignatureDrawingSpace = new PVector(0,APP_HEIGHT-SIGNATURE_SIZE);
+
+
 PreviewView _previewView = new PreviewView(vRobotDrawingSpace);
 GoalDrawing _goalDrawing = new GoalDrawing(vRobotDrawingSpace);
 
@@ -91,7 +95,7 @@ void draw()
   _previewView.drawPreview();
   _goalDrawing.drawPreview();
 
-  if(firstTouch){//if we've started drawing
+  if(firstTouch && validDrawingLocation() ){//if we've started drawing
   
     PVector currentPos = new PVector(mouseX,height-mouseY,0);
     if(PVector.dist(currentPos,sketchPoints.get(sketchPoints.size()-1)) > minLength){
@@ -101,12 +105,17 @@ void draw()
 
   //DRAW THE SIGNATURE
   strokeWeight(1);
+  stroke(0);
   noFill();
   beginShape();
   for(int i = 0; i< sketchPoints.size()-1; i++){
     vertex(sketchPoints.get(i).x,(sketchPoints.get(i).y-height)*-1);
   }
   endShape();
+
+  //PImage c = get(int(vSignatureDrawingSpace.x), int(vSignatureDrawingSpace.y), SIGNATURE_SIZE, SIGNATURE_SIZE);
+  //image(c,200,200);
+
 }
 
 void keyPressed() {
@@ -163,7 +172,7 @@ void keyPressed() {
 
 boolean validDrawingLocation()
 {
-   if (mouseX >= _previewView.topX && mouseX < _previewView.bottomX && mouseY > _previewView.topY && mouseY < _previewView.bottomY)
+   if (mouseX >= vSignatureDrawingSpace.x && mouseX < vSignatureDrawingSpace.x + SIGNATURE_SIZE && mouseY > vSignatureDrawingSpace.y && mouseY < vSignatureDrawingSpace.y + SIGNATURE_SIZE)
    {
      return true;
    }
@@ -188,14 +197,12 @@ void mouseClicked(){
    sketchPoints.clear();
    //reset to a new drawing
    firstTouch = false;
-  } else {
+  } else if (validDrawingLocation()) {
     
    firstTouch = true;
    
    PVector pos = new PVector(mouseX,height-mouseY,0);
-    if(validDrawingLocation()){ //ignore the annoying corner case
-      sketchPoints.add(pos);
-    }
+   sketchPoints.add(pos);
   }
 
 }

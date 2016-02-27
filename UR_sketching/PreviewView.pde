@@ -32,7 +32,13 @@ class PreviewView {
   void drawPreview() {
 
     strokeWeight(3);
+    stroke(0);
     rect(drawingBorder,drawingBorder,vPreviewSpace.x + drawingBorder,vPreviewSpace.y + drawingBorder);
+    
+    strokeWeight(3);
+    noFill();
+    stroke(120);
+    rect(vSignatureDrawingSpace.x,vSignatureDrawingSpace.y,SIGNATURE_SIZE,SIGNATURE_SIZE);
     
     strokeWeight(1);
     noFill();
@@ -45,7 +51,7 @@ class PreviewView {
       }
       endShape();
     }
-    
+
     //Debug output
     textSize(16);
     fill(255,0,0);

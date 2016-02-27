@@ -9,10 +9,35 @@ class Signature {
   ArrayList<PVector> robotSketchPoints = new ArrayList<PVector>();
   
   float DEFAULT_PREVIEW_SCALE = 1.0;
-
+  float density = 0;
+  
   Signature(ArrayList<PVector> _sketchPoints) {
 
-    sketchPoints = (ArrayList<PVector>)_sketchPoints.clone();
+    //Normalize location
+    for (int i=0; i<_sketchPoints.size(); i++)
+    {
+       sketchPoints.add(new PVector(_sketchPoints.get(i).x - vSignatureDrawingSpace.x, _sketchPoints.get(i).y + vSignatureDrawingSpace.y));
+       //sketchPoints.add(new PVector(_sketchPoints.get(i).x - vSignatureDrawingSpace.x , _sketchPoints.get(i).y - vSignatureDrawingSpace.y));
+    }
+    //sketchPoints = (ArrayList<PVector>)_sketchPoints.clone();
+    
+    //Get pixel density
+    PImage c = get(int(vSignatureDrawingSpace.x), int(vSignatureDrawingSpace.y), SIGNATURE_SIZE, SIGNATURE_SIZE);
+    
+    float _count = 0;
+    
+    for (int i=0; i<c.pixels.length; i++)
+    {
+      if (c.pixels[i] == color(0)) {
+        _count++;
+      }
+      
+    }
+    
+    density = 100* _count / (SIGNATURE_SIZE*SIGNATURE_SIZE);
+    
+    println("DENSITY : " + density);
+    
   }
   
   //Draw the preview points
