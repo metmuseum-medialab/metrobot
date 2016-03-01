@@ -154,7 +154,7 @@ void keyPressed() {
   }
   if (key == 'p') { // place a signature
 
-    /////////// PSEUDOCODE HERE FOR TEMPLATE-MATCHING DRAWING OF SIGNATURE ONTO CANVAS
+    /////////// PSEUDOCODE HERE FOR TEMPLATE-MATCHING DRAWING OF SIGNATURE ONTO CANVAS //////
 
     if (arrSignature.size() > 0) {
 
