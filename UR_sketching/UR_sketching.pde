@@ -23,9 +23,9 @@ PVector vRobotDrawingOffset = new PVector(-100,110);
 final int SIGNATURE_SIZE = 200;
 PVector vSignatureDrawingSpace = new PVector(0,APP_HEIGHT-SIGNATURE_SIZE);
 
-
-PreviewView _previewView = new PreviewView(vRobotDrawingSpace);
-GoalDrawing _goalDrawing = new GoalDrawing(vRobotDrawingSpace);
+PreviewView previewView = new PreviewView(vRobotDrawingSpace);
+GoalDrawing goalDrawing = new GoalDrawing(vRobotDrawingSpace);
+CanvasStatus canvasStatus = new CanvasStatus();
 
 //=================================NETWORKING DATA===========================================================================
 String ipAddress = "10.100.35.125"; //set the ip address of the robot
@@ -83,7 +83,7 @@ void setup()
   //firstMoveL.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1), new PVector(1,0,0)); 
   //ur.moveL(firstTarget); //uncomment if you want the robot to move to the origin at the start
 
-  _goalDrawing.loadGoal("example_goal_image_2.jpg");
+  goalDrawing.loadGoal("example_goal_image_2.jpg");
 }
 
 void draw() 
@@ -92,8 +92,8 @@ void draw()
   smooth();
   
   //Draw Preview View
-  _previewView.drawPreview();
-  _goalDrawing.drawPreview();
+  previewView.drawPreview();
+  goalDrawing.drawPreview();
 
   if(firstTouch && validDrawingLocation() ){//if we've started drawing
   
@@ -108,8 +108,8 @@ void draw()
   stroke(0);
   noFill();
   beginShape();
-  for(int i = 0; i< sketchPoints.size()-1; i++){
-    vertex(sketchPoints.get(i).x,(sketchPoints.get(i).y-height)*-1);
+  for(PVector p: sketchPoints) {
+    vertex(p.x, (p.y - height) * -1);
   }
   endShape();
 
@@ -130,7 +130,7 @@ void keyPressed() {
     if (arrSignature.size() > 0) {
         
         //Find random point and scale in preview area
-        PVector _v = new PVector(0, 0); // _previewView.getRandomPoint();
+        PVector _v = new PVector(0, 0); // previewView.getRandomPoint();
         float _s = 1; //.5 + random(1);
 
         println(_v);
@@ -143,7 +143,7 @@ void keyPressed() {
         sendPointsToUR(arrSignature.get(0).robotSketchPoints);
         
         //Now we can add these points to the preview
-        _previewView.addSignature(arrSignature.get(0).previewSketchPoints);
+        previewView.addSignature(arrSignature.get(0).previewSketchPoints);
         
         if (key == 'q') { 
           arrSignature.remove(0);
@@ -154,17 +154,24 @@ void keyPressed() {
   }
   if (key == 'p') { // place a signature
 
+    /////////// PSEUDOCODE HERE FOR TEMPLATE-MATCHING DRAWING OF SIGNATURE ONTO CANVAS
+
     if (arrSignature.size() > 0) {
 
         // choose a signature
-        Signature sig = arrSignature.get(0); 
+        Signature thisSignature = arrSignature.get(0); 
 
-        // using goaldrawing, generate a 'markorientation' - location, orientation, rotation
-        MarkOrientation mk = _goalDrawing.getSignatureLocation(sig); // TODO
+        // using webcam, update the status of the canvas
+        canvasStatus.update();
+
+        // using canvas status and goaldrawing, generate a 'markorientation' - location, orientation, rotation
+        // this is where the templateMatching would happen
+        MarkOrientation mk = goalDrawing.getSignatureLocation(canvasStatus, thisSignature); // TODO
 
         // send points to UR for generating a mark
-        //sendPointsToUR(sig.generateRobotMark(mk)); // TODO
-        
+	if (MODE_TESTING == false) {
+        	sendPointsToUR(sig.generateRobotMark(mk)); // TODO
+       	} 
     }
   }
 
