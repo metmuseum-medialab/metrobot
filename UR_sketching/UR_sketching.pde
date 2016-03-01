@@ -23,9 +23,9 @@ PVector vRobotDrawingOffset = new PVector(-100,110);
 final int SIGNATURE_SIZE = 200;
 PVector vSignatureDrawingSpace = new PVector(0,APP_HEIGHT-SIGNATURE_SIZE);
 
-
 PreviewView _previewView = new PreviewView(vRobotDrawingSpace);
 GoalDrawing _goalDrawing = new GoalDrawing(vRobotDrawingSpace);
+CanvasStatus _canvasStatus = new CanvasStatus();
 
 //=================================NETWORKING DATA===========================================================================
 String ipAddress = "10.100.35.125"; //set the ip address of the robot
@@ -154,16 +154,22 @@ void keyPressed() {
   }
   if (key == 'p') { // place a signature
 
+    /////////// PSEUDOCODE HERE
+
     if (arrSignature.size() > 0) {
 
         // choose a signature
-        Signature sig = arrSignature.get(0); 
+        Signature thisSignature = arrSignature.get(0); 
 
-        // using goaldrawing, generate a 'markorientation' - location, orientation, rotation
-        MarkOrientation mk = _goalDrawing.getSignatureLocation(sig); // TODO
+        // using webcam, update the status of the canvas
+        _canvasStatus.update();
 
-        // send points to UR for generating a mark
-        sendPointsToUR(sig.generateRobotMark(mk)); // TODO
+        // using canvas status and goaldrawing, generate a 'markorientation' - location, orientation, rotation
+        // this is where the templateMatching would happen
+        MarkOrientation mk = _goalDrawing.getSignatureLocation(_canvasStatus, thisSignature); // TODO
+
+        // given the signature and a markorientation, send points to UR
+        sendPointsToUR(thisSignature.generateRobotMark(mk)); // TODO
         
     }
   }
