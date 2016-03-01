@@ -37,7 +37,7 @@ class PreviewView {
     
     strokeWeight(3);
     noFill();
-    stroke(120);
+    stroke(200,200,0);
     rect(vSignatureDrawingSpace.x,vSignatureDrawingSpace.y,SIGNATURE_SIZE,SIGNATURE_SIZE);
     
     strokeWeight(1);

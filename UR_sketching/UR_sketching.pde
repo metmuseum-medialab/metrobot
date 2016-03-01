@@ -163,7 +163,7 @@ void keyPressed() {
         MarkOrientation mk = _goalDrawing.getSignatureLocation(sig); // TODO
 
         // send points to UR for generating a mark
-        sendPointsToUR(sig.generateRobotMark(mk)); // TODO
+        //sendPointsToUR(sig.generateRobotMark(mk)); // TODO
         
     }
   }
