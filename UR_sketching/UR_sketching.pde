@@ -108,8 +108,8 @@ void draw()
   stroke(0);
   noFill();
   beginShape();
-  for(int i = 0; i< sketchPoints.size()-1; i++){
-    vertex(sketchPoints.get(i).x,(sketchPoints.get(i).y-height)*-1);
+  for(PVector p: sketchPoints) {
+    vertex(p.x, (p.y - height) * -1);
   }
   endShape();
 
