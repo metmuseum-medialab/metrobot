@@ -5,8 +5,8 @@
 class Signature {
 
   ArrayList<PVector> sketchPoints = new ArrayList<PVector>();  //store our drawing in this arraylist
-  ArrayList<PVector> previewSketchPoints = new ArrayList<PVector>();
-  ArrayList<PVector> robotSketchPoints = new ArrayList<PVector>();
+  //ArrayList<PVector> previewSketchPoints = new ArrayList<PVector>();
+  //ArrayList<PVector> robotSketchPoints = new ArrayList<PVector>();
   
   float DEFAULT_PREVIEW_SCALE = 1.0;
   float density = 0;
@@ -16,7 +16,7 @@ class Signature {
     //Normalize location
     for (int i=0; i<_sketchPoints.size(); i++)
     {
-       sketchPoints.add(new PVector(_sketchPoints.get(i).x - vSignatureDrawingSpace.x, _sketchPoints.get(i).y + vSignatureDrawingSpace.y));
+       sketchPoints.add(new PVector(_sketchPoints.get(i).x - vSignatureDrawingSpace.x, _sketchPoints.get(i).y - vSignatureDrawingSpace.y));
        //sketchPoints.add(new PVector(_sketchPoints.get(i).x - vSignatureDrawingSpace.x , _sketchPoints.get(i).y - vSignatureDrawingSpace.y));
     }
     //sketchPoints = (ArrayList<PVector>)_sketchPoints.clone();
@@ -41,11 +41,12 @@ class Signature {
   }
   
   //Draw the preview points
+/*
   void setSignaturePoints(PVector _v, float _scale, float _rot) {
     
     for (int i=0;i<sketchPoints.size();i++)
     {
-       previewSketchPoints.add(
+         robotSketchPoints.add(
          new PVector(
            _v.x+int(sketchPoints.get(i).x*DEFAULT_PREVIEW_SCALE*_scale),
            _v.y+int(sketchPoints.get(i).y*DEFAULT_PREVIEW_SCALE*_scale)
@@ -59,9 +60,36 @@ class Signature {
          )); 
     }
   }
+*/
+  ArrayList<PVector> generateRobotMark(MarkOrientation mk, boolean bPreview) {
 
-  ArrayList<PVector> generateRobotMark(MarkOrientation mk) {
-    return new ArrayList<PVector>();
-    // TODO
+    ArrayList<PVector> robotSketchPoints = new ArrayList<PVector>();
+ 
+    for (int i=0;i<sketchPoints.size();i++)
+    {
+      
+       PVector _p;
+      
+       if (bPreview == true)
+       {
+         _p = new PVector(
+             mk.loc.x+int(sketchPoints.get(i).x*DEFAULT_PREVIEW_SCALE*mk.scale),
+             mk.loc.y+int(sketchPoints.get(i).y*DEFAULT_PREVIEW_SCALE*mk.scale)
+           );
+           
+       } else {
+       
+         _p = new PVector(
+           mk.loc.x + int(sketchPoints.get(i).x*mk.scale) + vRobotDrawingOffset.x,
+           mk.loc.y + int(sketchPoints.get(i).y*mk.scale) + vRobotDrawingOffset.y
+          );
+       }
+       
+       _p.rotate((mk.rotation/360)*TWO_PI);
+         
+       robotSketchPoints.add(_p);  
+    }
+    
+    return robotSketchPoints;
   }
 }

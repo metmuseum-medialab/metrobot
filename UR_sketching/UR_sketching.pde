@@ -97,7 +97,10 @@ void draw()
 
   if(firstTouch && validDrawingLocation() ){//if we've started drawing
   
-    PVector currentPos = new PVector(mouseX,height-mouseY,0);
+    //*Remove the Y normalization and only add in at end before sending points to robot
+    //PVector currentPos = new PVector(mouseX,height-mouseY,0);
+    PVector currentPos = new PVector(mouseX,mouseY,0);
+
     if(PVector.dist(currentPos,sketchPoints.get(sketchPoints.size()-1)) > minLength){
       sketchPoints.add(currentPos);
     }
@@ -109,7 +112,9 @@ void draw()
   noFill();
   beginShape();
   for(PVector p: sketchPoints) {
-    vertex(p.x, (p.y - height) * -1);
+    
+    //*Remove the Y normalization and only add in at end before sending points to robot
+    vertex(p.x, p.y);
   }
   endShape();
 
@@ -137,13 +142,13 @@ void keyPressed() {
         
         //We first call a funciton to conform the signature points in robot and preview space for the 
         // given parameters: location, scale, rotation
-        arrSignature.get(0).setSignaturePoints(_v, _s, 0);
+        //arrSignature.get(0).setSignaturePoints(_v, _s, 0);
         
         //Now we can send these points to the robot
-        sendPointsToUR(arrSignature.get(0).robotSketchPoints);
+        //sendPointsToUR(arrSignature.get(0).robotSketchPoints);
         
         //Now we can add these points to the preview
-        previewView.addSignature(arrSignature.get(0).previewSketchPoints);
+        //previewView.addSignature(arrSignature.get(0).previewSketchPoints);
         
         if (key == 'q') { 
           arrSignature.remove(0);
@@ -168,9 +173,12 @@ void keyPressed() {
         // this is where the templateMatching would happen
         MarkOrientation mk = goalDrawing.getSignatureLocation(canvasStatus, thisSignature); // TODO
 
+        //Add to our view
+        previewView.addSignature(thisSignature.generateRobotMark(mk,true));
+
         // send points to UR for generating a mark
-	if (MODE_TESTING == false) {
-        	sendPointsToUR(sig.generateRobotMark(mk)); // TODO
+  	if (MODE_TESTING == false) {
+            sendPointsToUR(thisSignature.generateRobotMark(mk,false)); // TODO
        	} 
     }
   }
@@ -208,7 +216,8 @@ void mouseClicked(){
     
    firstTouch = true;
    
-   PVector pos = new PVector(mouseX,height-mouseY,0);
+   //*Remove the Y normalization and only add in at end before sending points to robot
+   PVector pos = new PVector(mouseX,mouseY,0);
    sketchPoints.add(pos);
   }
 

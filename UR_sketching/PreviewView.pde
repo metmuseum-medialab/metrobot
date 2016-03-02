@@ -47,7 +47,7 @@ class PreviewView {
     {
       beginShape();
       for (int j=0; j<arrDrawings.get(i).size(); j++) {
-         vertex(arrDrawings.get(i).get(j).x + drawingBorder, -1*(arrDrawings.get(i).get(j).y-APP_HEIGHT) + drawingBorder);
+         vertex(arrDrawings.get(i).get(j).x + drawingBorder, arrDrawings.get(i).get(j).y + drawingBorder);
       }
       endShape();
     }
