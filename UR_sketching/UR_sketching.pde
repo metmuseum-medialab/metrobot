@@ -51,27 +51,22 @@ void setup()
 {
   size(825, 500);
 
-  if (MODE_TESTING)
-  {
-    //if we aren't connected to the robot, we can start the class in testing mode
-    ur = new URCom("testing"); //comment if connected to the robot (uncomment if not)
+  if (MODE_TESTING) {
+    ur = new URCom("testing"); 
+  } else {
+    ur = new URCom("socket"); 
+    ur.startSocket(this, ipAddress, port);
   }
-  else
-  {
-    //if we are actually connected to the robot, we want to start the class in socket mode...
-    ur = new URCom("socket"); //uncomment if connected to the robot (comment if not)
-    ur.startSocket(this,ipAddress,port); //uncomment if connected to the robot (comment if not)
-  }
-  
   
   Pose basePlane = new Pose(); //make a new "Pose" (Position and orientation) for our base plane
   basePlane.fromPoints(origin,xPt,yPt); //define the base plane based on our probed points
   ur.setWorkObject(basePlane); //set this base plane as our transformation matrix for subsequent movement operations
-  //==================================================================================================================
+ 
   Pose firstTarget = new Pose(); //make a new pose object to store our desired position and orientation of the tool
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
-  goalDrawing.loadGoal("example_goal_image_2.jpg");
+  goalDrawing.loadFromImage("example_goal_image_2.jpg");
+
 }
 
 void draw() 
@@ -81,6 +76,7 @@ void draw()
   
   //Draw Preview View
   previewView.drawPreview();
+
   goalDrawing.drawPreview();
 
   if(firstTouch && validDrawingLocation() ){//if we've started drawing

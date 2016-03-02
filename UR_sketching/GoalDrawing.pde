@@ -17,7 +17,7 @@ class GoalDrawing {
     bottomY = drawingBorder + int(vPreviewSpace.y);
   }
 
-  void loadGoal(String filename) { //loads a grayscale image for goal image
+  void loadFromImage(String filename) { //loads a grayscale image for goal image
     goalImg = loadImage(filename);
   }
   
