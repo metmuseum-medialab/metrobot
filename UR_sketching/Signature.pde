@@ -65,29 +65,42 @@ class Signature {
 
     ArrayList<PVector> robotSketchPoints = new ArrayList<PVector>();
  
+    PVector _center = new PVector(mk.scale*SIGNATURE_SIZE*.5, mk.scale*SIGNATURE_SIZE*.5);
+ 
     for (int i=0;i<sketchPoints.size();i++)
     {
       
        PVector _p;
-      
+       
        if (bPreview == true)
        {
          _p = new PVector(
-             mk.loc.x+int(sketchPoints.get(i).x*DEFAULT_PREVIEW_SCALE*mk.scale),
-             mk.loc.y+int(sketchPoints.get(i).y*DEFAULT_PREVIEW_SCALE*mk.scale)
+             int(sketchPoints.get(i).x*DEFAULT_PREVIEW_SCALE*mk.scale),
+             int(sketchPoints.get(i).y*DEFAULT_PREVIEW_SCALE*mk.scale)
            );
            
        } else {
        
          //Add the Y Normalization back in before we send to robot
          _p = new PVector(
-           mk.loc.x + int(sketchPoints.get(i).x*mk.scale) + vRobotDrawingOffset.x,
-           mk.loc.y + int((height-sketchPoints.get(i).y)*mk.scale) + vRobotDrawingOffset.y
+           int(sketchPoints.get(i).x*mk.scale),
+           int((height-sketchPoints.get(i).y)*mk.scale)
           );
        }
        
+       
+       _p.x -= _center.x;
+       _p.y -= _center.y;
+       
        _p.rotate((mk.rotation/360)*TWO_PI);
-         
+       
+       _p.x += mk.loc.x;
+       _p.y += mk.loc.y;
+       
+       if (bPreview == false) {
+         _p.x += vRobotDrawingOffset.x;
+         _p.y += vRobotDrawingOffset.y;
+       }
        robotSketchPoints.add(_p);  
     }
     
