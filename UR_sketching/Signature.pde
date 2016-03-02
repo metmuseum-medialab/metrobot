@@ -79,9 +79,10 @@ class Signature {
            
        } else {
        
+         //Add the Y Normalization back in before we send to robot
          _p = new PVector(
            mk.loc.x + int(sketchPoints.get(i).x*mk.scale) + vRobotDrawingOffset.x,
-           mk.loc.y + int(sketchPoints.get(i).y*mk.scale) + vRobotDrawingOffset.y
+           mk.loc.y + int((height-sketchPoints.get(i).y)*mk.scale) + vRobotDrawingOffset.y
           );
        }
        
