@@ -1,13 +1,13 @@
 
 class CanvasStatus {
 
-  // This class stores the current canvas status -- captured by the webcam
+  // This class stores the current canvas status -- captured by the webcam, or computed internally
   // This class is reponsible for moving the robot arm and updating the canvas, etc.
 
-  // WEBCAM INFO
+  PImage canvas;
 
-  CanvasStatus() {
-    // TODO
+  CanvasStatus(int w, int h) {
+    canvas = new PImage(w, h, ALPHA);
   }
 
   void update() {

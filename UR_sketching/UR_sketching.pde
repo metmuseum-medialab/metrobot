@@ -16,8 +16,12 @@ final int APP_HEIGHT = 500;
 final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
 
+//Drawing canvas size
+final int CANVAS_WIDTH = 825;
+final int CANVAS_HEIGHT = 500;
+
 //Define the Robot drawing space. Currently i'm just using an arbitrary aspect ratio, and use it to define the preview space
-PVector vRobotDrawingSpace = new PVector(825,500);
+PVector vRobotDrawingSpace = new PVector(CANVAS_WIDTH, CANVAS_HEIGHT);
 PVector vRobotDrawingOffset = new PVector(-100,110);
 
 final int SIGNATURE_SIZE = 200;
@@ -25,7 +29,7 @@ PVector vSignatureDrawingSpace = new PVector(0,APP_HEIGHT-SIGNATURE_SIZE);
 
 PreviewView previewView = new PreviewView(vRobotDrawingSpace);
 GoalDrawing goalDrawing = new GoalDrawing(vRobotDrawingSpace);
-CanvasStatus canvasStatus = new CanvasStatus();
+CanvasStatus canvasStatus = new CanvasStatus(CANVAS_WIDTH, CANVAS_HEIGHT);
 
 //=================================NETWORKING DATA===========================================================================
 String ipAddress = "10.100.35.125"; //set the ip address of the robot
@@ -147,30 +151,31 @@ void keyPressed() {
 
     if (arrSignature.size() > 0) {
 
-        // choose a signature
-        Signature thisSignature = arrSignature.get(0); 
+      // choose a signature
+      Signature thisSignature = arrSignature.get(0); 
 
-        // using webcam, update the status of the canvas
-        canvasStatus.update();
+      // using webcam, update the status of the canvas
+      canvasStatus.update();
 
-        // using canvas status and goaldrawing, generate a 'markorientation' - location, orientation, rotation
-        // this is where the templateMatching would happen
-        MarkOrientation mk = goalDrawing.getSignatureLocation(canvasStatus, thisSignature); // TODO
+      // using canvas status and goaldrawing, generate a 'markorientation' - location, orientation, rotation
+      // this is where the templateMatching would happen
+      MarkOrientation mk = goalDrawing.getSignatureLocation(canvasStatus, thisSignature); // TODO
 
-        //Add to our view
-        previewView.addSignature(thisSignature.generateRobotMark(mk,true));
+      //Add to our view
+      previewView.addSignature(thisSignature.generateRobotMark(mk,true));
 
-        // send points to UR for generating a mark
-  	if (MODE_TESTING == false) {
+      // send points to UR for generating a mark
+      //
+      if (MODE_TESTING == false) {
             ur.sendPoints(thisSignature.generateRobotMark(mk,false)); // TODO
-       	} 
+      } 
     }
+
   }
 
 }
 
-boolean validDrawingLocation()
-{
+boolean validDrawingLocation() {
    if (mouseX >= vSignatureDrawingSpace.x && mouseX < vSignatureDrawingSpace.x + SIGNATURE_SIZE && mouseY > vSignatureDrawingSpace.y && mouseY < vSignatureDrawingSpace.y + SIGNATURE_SIZE)
    {
      return true;
@@ -178,20 +183,17 @@ boolean validDrawingLocation()
    return false;
 }
 
-void mouseClicked(){
+void mouseClicked() {
   
   //Add a signature
   if (firstTouch) {
     
-   if (MODE_QUEUE)
-   {
-     arrSignature.add(new Signature(sketchPoints));
-   }
-   else 
-   {
-     //If no queue, just send signature right to robot
-     ur.sendPoints(sketchPoints);
-   }
+    if (MODE_QUEUE) {
+      arrSignature.add(new Signature(sketchPoints));
+    } else {
+      //If no queue, just send signature right to robot
+      ur.sendPoints(sketchPoints);
+    }
 
    sketchPoints.clear();
    //reset to a new drawing

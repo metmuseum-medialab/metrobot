@@ -9,14 +9,11 @@ class PreviewView {
   int topX, topY, bottomX, bottomY;
   
   PreviewView(PVector _drawingSpace) {
- 
     vPreviewSpace = new PVector(_drawingSpace.x, _drawingSpace.y);
- 
     topX = drawingBorder; 
     topY = drawingBorder; 
     bottomX = drawingBorder + int(vPreviewSpace.x); 
     bottomY = drawingBorder + int(vPreviewSpace.y);
- 
   }
   
   PVector getRandomPoint()
