@@ -136,5 +136,34 @@ class URCom {
     msg += "]" ;
     return msg;
   }
-  
+
+
+  //SEND POINTS TO UR
+  void sendPoints(ArrayList<PVector> _sketchPoints)
+  {
+    //send the list of target points when the mouse is clicked
+    Pose [] poseArray = new Pose[_sketchPoints.size() + 2]; //CREATE A POSE ARRAY TO HOLD ALL OF OUR DRAWING SEQUENCE
+    
+    ///ADD THE LIFT POINTS TO THE BEGINNING AND END OF THE POSE ARRAY
+    PVector aboveFirstPt = new PVector(_sketchPoints.get(0).x,_sketchPoints.get(0).y,_sketchPoints.get(0).z+zLift);
+    PVector aboveLastPt = new PVector(_sketchPoints.get(_sketchPoints.size()-1).x,_sketchPoints.get(_sketchPoints.size()-1).y,_sketchPoints.get(_sketchPoints.size()-1).z+zLift);
+    Pose aboveFirstPose = new Pose();
+    Pose aboveLastPose = new Pose();
+    aboveFirstPose.fromTargetAndGuide(aboveFirstPt,new PVector(0,0,-1));
+    aboveLastPose.fromTargetAndGuide(aboveLastPt,new PVector(0,0,-1));
+    poseArray[0] = aboveFirstPose;
+    poseArray[_sketchPoints.size() + 1] = aboveLastPose; //something is off here...the above point isn't getting added...no time to debug...
+    
+    ///ADD ALL THE ACTUAL SKETCH POINTS TO OUR POSE ARRAY
+    for(int i = 0; i< _sketchPoints.size(); i++){ //for each point in our arraylist
+      Pose target = new Pose();//creat a new target pose
+      
+      println("Sketch points sent : " + _sketchPoints.get(i).x + "," + _sketchPoints.get(i).y);
+      
+      target.fromTargetAndGuide(_sketchPoints.get(i), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
+      poseArray[i+1] = target;
+    }
+    bufferedMoveL(poseArray,openingLines,closingLines); //make our drawing happen!
+  }
+    
 }//end URCom Class

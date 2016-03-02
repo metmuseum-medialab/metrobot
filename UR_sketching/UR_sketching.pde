@@ -79,7 +79,7 @@ void draw()
 
   goalDrawing.drawPreview();
 
-  if(firstTouch && validDrawingLocation() ){//if we've started drawing
+  if(firstTouch && validDrawingLocation() ) {//if we've started drawing
   
     //*Remove the Y normalization and only add in at end before sending points to robot
     //PVector currentPos = new PVector(mouseX,height-mouseY,0);
@@ -162,7 +162,7 @@ void keyPressed() {
 
         // send points to UR for generating a mark
   	if (MODE_TESTING == false) {
-            sendPointsToUR(thisSignature.generateRobotMark(mk,false)); // TODO
+            ur.sendPoints(thisSignature.generateRobotMark(mk,false)); // TODO
        	} 
     }
   }
@@ -190,7 +190,7 @@ void mouseClicked(){
    else 
    {
      //If no queue, just send signature right to robot
-     sendPointsToUR(sketchPoints);
+     ur.sendPoints(sketchPoints);
    }
 
    sketchPoints.clear();
@@ -207,31 +207,4 @@ void mouseClicked(){
 
 }
 
-//SEND POINTS TO UR
-void sendPointsToUR(ArrayList<PVector> _sketchPoints)
-{
-  //send the list of target points when the mouse is clicked
-  Pose [] poseArray = new Pose[_sketchPoints.size() + 2]; //CREATE A POSE ARRAY TO HOLD ALL OF OUR DRAWING SEQUENCE
-  
-  ///ADD THE LIFT POINTS TO THE BEGINNING AND END OF THE POSE ARRAY
-  PVector aboveFirstPt = new PVector(_sketchPoints.get(0).x,_sketchPoints.get(0).y,_sketchPoints.get(0).z+zLift);
-  PVector aboveLastPt = new PVector(_sketchPoints.get(_sketchPoints.size()-1).x,_sketchPoints.get(_sketchPoints.size()-1).y,_sketchPoints.get(_sketchPoints.size()-1).z+zLift);
-  Pose aboveFirstPose = new Pose();
-  Pose aboveLastPose = new Pose();
-  aboveFirstPose.fromTargetAndGuide(aboveFirstPt,new PVector(0,0,-1));
-  aboveLastPose.fromTargetAndGuide(aboveLastPt,new PVector(0,0,-1));
-  poseArray[0] = aboveFirstPose;
-  poseArray[_sketchPoints.size() + 1] = aboveLastPose; //something is off here...the above point isn't getting added...no time to debug...
-  
-  ///ADD ALL THE ACTUAL SKETCH POINTS TO OUR POSE ARRAY
-  for(int i = 0; i< _sketchPoints.size(); i++){ //for each point in our arraylist
-    Pose target = new Pose();//creat a new target pose
-    
-    println("Sketch points sent : " + _sketchPoints.get(i).x + "," + _sketchPoints.get(i).y);
-    
-    target.fromTargetAndGuide(_sketchPoints.get(i), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
-    //ur.moveL(target);
-    poseArray[i+1] = target;
-  }
-  ur.bufferedMoveL(poseArray,openingLines,closingLines); //make our drawing happen!
-}
+
