@@ -8,8 +8,9 @@ float scaleForCalculations = .5;  //our image processing is really slow, so we h
 
 
 void setup() {
+
   size(1000, 1000); //this should match the size of the goal image, which should also match the size of the robot coordinate space in mm...
-  goalImg=loadImage("br1.jpg"); //our goal image
+  goalImg = loadImage("br1.jpg"); //our goal image
   sigImg = createImage(signatureWidth, signatureHeight, RGB);
 
   //===========================CREATE CANVAS (EQUIVALENT TO WEBCAM IMAGE)====================================
@@ -71,9 +72,7 @@ void draw() {
 
 
 
-//====================FUNCTION FOR GETTING SIGNATURE LOCATION======================
-//====================FUNCTION FOR GETTING SIGNATURE LOCATION======================
-//====================FUNCTION FOR GETTING SIGNATURE LOCATION======================
+// FUNCTION FOR GETTING SIGNATURE LOCATION
 PVector getSignatureLocation(PImage cameraPI, PImage goalPI, PImage signaturePI, float scale) {
   PImage goalImage = goalPI.copy();
   PImage cameraImage = cameraPI.copy();
@@ -101,8 +100,8 @@ PVector getSignatureLocation(PImage cameraPI, PImage goalPI, PImage signaturePI,
   for (int i = 0; i<loopHeight; i++) { //for EVERY signature sized square in the difference image, compare the signature to this image to see how well we match
     for (int j = 0; j<loopWidth; j++) {
       int movementSum = 0; // Amount of movement in the section
-      color goalPixelAverage = new color(255,255,255);
-      color cameraPixelAverage = new color(255,255,255);
+      color goalPixelAverage = color(255,255,255);
+      color cameraPixelAverage = color(255,255,255);
       //goalPixelAverage = goalImage.get(
       for (int k = 0; k<sHeight-1; k++) {
         for (int l = 0; l<sWidth-1; l++) {
@@ -134,9 +133,7 @@ PVector getSignatureLocation(PImage cameraPI, PImage goalPI, PImage signaturePI,
   PVector sigLocation = new PVector(matchingCoordX*rescaleMultiplier, matchingCoordY*rescaleMultiplier); //return the location of the signature
   return sigLocation;
 }
-//====================FUNCTION FOR GENERATING RANDOM "SIGNATURES"======================
-//====================FUNCTION FOR GENERATING RANDOM "SIGNATURES"======================
-//====================FUNCTION FOR GENERATING RANDOM "SIGNATURES"======================
+// FUNCTION FOR GENERATING RANDOM "SIGNATURES"
 PImage getSampleSig(int sWidth, int sHeight) {
   //a simple function for drawing an ugly bunch of lines, returns a PImage
   PGraphics pg = createGraphics(sWidth, sHeight);
@@ -165,9 +162,8 @@ PImage getSampleSig(int sWidth, int sHeight) {
   pg.endDraw();
   return pg.get();
 }
-//====================FUNCTION FOR RETURNING DIFFERENCE IMAGE BETWEEN TWO IMAGES======================
-//====================FUNCTION FOR RETURNING DIFFERENCE IMAGE BETWEEN TWO IMAGES======================
-//====================FUNCTION FOR RETURNING DIFFERENCE IMAGE BETWEEN TWO IMAGES======================
+
+// FUNCTION FOR RETURNING DIFFERENCE IMAGE BETWEEN TWO IMAGES
 PImage getDifferenceImage(PImage image1, PImage image2) {
   //returns the difference image from two images that are the same size, and black and white
   //in this case, image2 is our "canvas image"
