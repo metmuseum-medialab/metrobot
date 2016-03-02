@@ -63,25 +63,13 @@ void setup()
     ur.startSocket(this,ipAddress,port); //uncomment if connected to the robot (comment if not)
   }
   
-  //delay(1000);
- // textToSend = getText();
-  //println(textToSend);
-  //ur.write(textToSend);
   
-  //==========================================SETUP BASE PLANE========================================================
- // origin.mult(1000); //we want to use millimeters as our units, as they are a sensible unit, and easier to scale from processing pixel coords
-  //xPt.mult(1000);//we want to use millimeters as our units, as they are a sensible unit, and easier to scale from processing pixel coords
-  //yPt.mult(1000);//we want to use millimeters as our units, as they are a sensible unit, and easier to scale from processing pixel coords
-
- Pose basePlane = new Pose(); //make a new "Pose" (Position and orientation) for our base plane
+  Pose basePlane = new Pose(); //make a new "Pose" (Position and orientation) for our base plane
   basePlane.fromPoints(origin,xPt,yPt); //define the base plane based on our probed points
   ur.setWorkObject(basePlane); //set this base plane as our transformation matrix for subsequent movement operations
   //==================================================================================================================
   Pose firstTarget = new Pose(); //make a new pose object to store our desired position and orientation of the tool
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
-  //if we also care about rotation of the tool, we can add the optional third argument that defines what vector to use as a guide for the x axis:
-  //firstMoveL.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1), new PVector(1,0,0)); 
-  //ur.moveL(firstTarget); //uncomment if you want the robot to move to the origin at the start
 
   goalDrawing.loadGoal("example_goal_image_2.jpg");
 }
