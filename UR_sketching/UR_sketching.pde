@@ -74,8 +74,6 @@ void setup()
   canvasStatus = new CanvasStatus(APP_WIDTH, APP_HEIGHT);
   templateMatcher = new TemplateMatcher();
 
-  println("!!!");
-
   Pose basePlane = new Pose(); //make a new "Pose" (Position and orientation) for our base plane
   basePlane.fromPoints(origin,xPt,yPt); //define the base plane based on our probed points
   ur.setWorkObject(basePlane); //set this base plane as our transformation matrix for subsequent movement operations
@@ -83,10 +81,8 @@ void setup()
   Pose firstTarget = new Pose(); //make a new pose object to store our desired position and orientation of the tool
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
-  println("!!!");
   goalDrawing.loadFromImage("hokusai_cropped.jpg");
 
-  println("!!!");
 }
 
 void draw() {
@@ -160,7 +156,7 @@ void keyPressed() {
 
 
 void placeSignature() {
-    ////// THIS IS WHERE THE MAGIC IS RIGHT NOW ////
+  ////// THIS IS WHERE THE MAGIC IS RIGHT NOW ////
 
   if (arrSignature.size() > 0) {
     PLACING_SIGNATURE = true;
@@ -180,16 +176,19 @@ void placeSignature() {
     MarkOrientation mk = templateMatcher.placeSignature(goalDrawing, canvasStatus, thisSignature);
     println(mk);
 
+    // add signature to canvas
+    canvasStatus.addSignature(thisSignature, mk);
+
+    // draw if relevant
+    if (key == 'a') { 
       ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
-
-      if (key == 'a') { 
-          arrSignature.remove(0);
-      }
-
+      arrSignature.remove(0);
     }
 
-    PLACING_SIGNATURE = false;
   }
+
+  PLACING_SIGNATURE = false;
+}
 
 
 boolean validDrawingLocation() {

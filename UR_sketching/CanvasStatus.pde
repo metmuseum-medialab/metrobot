@@ -26,12 +26,8 @@ class CanvasStatus {
   }
 
   void addSignature(Signature sig, MarkOrientation mk) {
-/*    canvasImg.blend(sig.getPImage(), 
-    0, 0, sig.signatureSize, sig.signatureSize,
-    int(mk.location.x), int(mk.location.y), sig.signatureSize, sig.signatureSize,
-    DARKEST);*/
-  // TODO: implement rotation and scaling
-  //
+
+  // TODO: implement scaling
 
     PGraphics pg = createGraphics(sig.signatureSize * 2, sig.signatureSize * 2); 
     pg.beginDraw();
@@ -41,7 +37,7 @@ class CanvasStatus {
     pg.stroke(0);
     pg.strokeWeight(2);
     pg.translate(pg.width / 2, pg.height / 2);
-    pg.rotate(radians(45));
+    pg.rotate(mk.rotation);
     pg.image(sig.getPImage(), 0, 0); 
     pg.popMatrix();
     pg.endDraw();
