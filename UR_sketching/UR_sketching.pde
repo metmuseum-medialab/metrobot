@@ -6,7 +6,7 @@
 final static int APP_WIDTH = 1000;
 final static int APP_HEIGHT = 1000;
 
-final boolean MODE_TESTING = false;
+final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
 
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
@@ -33,9 +33,9 @@ String textToSend;
 
 
 //Define the Robot drawing space. Currently i'm just using an arbitrary aspect ratio, and use it to define the preview space
-PVector vRobotDrawingSpace = new PVector(APP_WIDTH, APP_HEIGHT);
+PVector vRobotDrawingSpace = new PVector(825, 500);
 PVector vRobotDrawingOffset = new PVector(-100,110);
-static PVector vSignatureDrawingSpace = new PVector(0,APP_HEIGHT - SIGNATURE_SIZE);
+PVector vSignatureDrawingSpace = new PVector(0, vRobotDrawingSpace.y - SIGNATURE_SIZE);
 
 //Array of signatures
 ArrayList<Signature> arrSignature = new ArrayList<Signature>();
@@ -80,7 +80,7 @@ void setup()
   Pose firstTarget = new Pose(); //make a new pose object to store our desired position and orientation of the tool
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
-  goalDrawing.loadFromImage("pollock_800.jpg");
+  goalDrawing.loadFromImage("t.jpg"); //pollock_800.jpg");
 
 }
 
@@ -88,10 +88,12 @@ void draw() {
   background(255);
   smooth();
   
+  goalDrawing.drawPreview();
+  
   //Draw Preview View
   previewView.drawPreview();
 
-  goalDrawing.drawPreview();
+  
 
   if(firstTouch && validDrawingLocation() ) {//if we've started drawing
   
@@ -180,7 +182,7 @@ void keyPressed() {
 
   }
   if (key == 'r') { 
-    new Signature.test();
+    //new Signature.test();
   }
 
 }

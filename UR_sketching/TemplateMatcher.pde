@@ -7,8 +7,9 @@ class TemplateMatcher {
 
   MarkOrientation placeSignature(GoalDrawing goalDrawing, CanvasStatus canvasStatus, Signature thisSignature) {
     println("HEYYYY!");
-    return new MarkOrientation(new PVector(APP_WIDTH/2, APP_HEIGHT/2), (random(1)+.5), random(360));
+    
+    //return new MarkOrientation(new PVector(APP_WIDTH/2, APP_HEIGHT/2), (random(1)+.5), random(360));
+    return new MarkOrientation(new PVector(vRobotDrawingSpace.x/2, vRobotDrawingSpace.y/2), 1, 0);
   }
 
 }
-

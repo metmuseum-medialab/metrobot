@@ -90,7 +90,7 @@ class Signature {
          
          //Add the Y Normalization back in before we send to robot
          //This needs to be moved to the last thing that is done
-         _p.y = height - _p.y;
+         _p.y = vRobotDrawingSpace.y - _p.y;
          
          _p.x += vRobotDrawingOffset.x;
          _p.y += vRobotDrawingOffset.y;
