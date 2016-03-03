@@ -8,8 +8,8 @@ float scaleForCalculations = .5;  //our image processing is really slow, so we h
 
 
 void setup() {
-  size(1000, 1000); //this should match the size of the goal image, which should also match the size of the robot coordinate space in mm...
-  goalImg=loadImage("br2.jpg"); //our goal image
+  size(800, 800); //this should match the size of the goal image, which should also match the size of the robot coordinate space in mm...
+  goalImg=loadImage("pollock_800.jpg"); //our goal image
   sigImg = createImage(signatureWidth, signatureHeight, RGB);
 
   //===========================CREATE CANVAS (EQUIVALENT TO WEBCAM IMAGE)====================================
@@ -49,18 +49,21 @@ void draw() {
   //send signature with corner location "signatureLocation"
   ////////end this is where we would send the signature//////////////
 
+  println(signatureLocation.x + " : " + signatureLocation.y);
+
   //===============UPDATE CANVAS IMAGE (DELETE IF USING WEBCAM)==================================================
   //update our canvas image to contain this little drawing (all of this doesn't have to happen if we're using a webcam)
-  for (int i = 0; i<signatureHeight-1; i++) {
-    for (int j = 0; j<signatureWidth-1; j++) {
-      int canvasIndex = (int(signatureLocation.x) + j) + (int(signatureLocation.y)+i)*goalImg.width;
-      int theSampleIndex = j + i*signatureWidth;
-      if (red(sigImg.pixels[theSampleIndex]) <= 100 && alpha(sigImg.pixels[theSampleIndex])>=100) {
-        canvasImg.pixels[canvasIndex] = sigImg.pixels[theSampleIndex];
-      }
-    }
-  }
-  canvasImg.updatePixels();
+  //
+/*  PGraphics canvasGraphics = createGraphics(goalImg.width, goalImg.height);
+  canvasGraphics.beginDraw();
+  canvasGraphics.image(canvasImg, 0, 0);
+  canvasGraphics.endDraw();*/
+
+  canvasImg.blend(sigImg, 
+    0, 0, signatureWidth, signatureHeight, 
+    int(signatureLocation.x), int(signatureLocation.y), signatureWidth, signatureHeight,
+    BLEND);
+
   if (frameCount%30 == 0) {
     saveFrame("BR3-#####.jpg");
   }

@@ -25,13 +25,6 @@ class GoalDrawing {
     image(goalImg, 0, 0);
   }
 
-  MarkOrientation getSignatureLocation(CanvasStatus canv, Signature sig) {
-    // TODO
-    
-    //
-    return new MarkOrientation(new PVector(APP_WIDTH/2, APP_HEIGHT/2), (random(1)+.5), random(360));
-    //return new MarkOrientation(new PVector(0,0), 1.0, 0.0);
-  }
 
   void pointsToDraw() {
     println("hey");

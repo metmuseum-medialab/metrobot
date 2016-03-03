@@ -106,4 +106,39 @@ class Signature {
     
     return robotSketchPoints;
   }
+
+    void test() {
+      println("yehofjdsklf;as");
+    }
+  PImage generateRandomSignature() {
+    int sWidth = SIGNATURE_SIZE;
+    int sHeight = SIGNATURE_SIZE;
+    //a simple function for drawing an ugly bunch of lines, returns a pimage
+    PGraphics pg = createGraphics(sWidth, sHeight);
+    pg.beginDraw();
+    //pg.background(255);
+    pg.noFill();
+    pg.stroke(0);
+    pg.strokeWeight(2);
+    int vertexCount = int(random(2, 14));
+    pg.beginShape();
+    if (random(1)<.6) {
+      for (int i = 0; i< vertexCount - 1; i++) {
+        pg.vertex(random(sWidth), random(sHeight));
+      }
+    } else {
+      for (int i = 0; i< vertexCount - 1; i++) {
+        int vx = int(random(sWidth));
+        int vy = int(random(sHeight));
+        if (i == 0 || i == vertexCount-1) {
+          pg.curveVertex(vx, vy);
+        }
+        pg.curveVertex(vx, vy);
+      }
+    }
+    pg.endShape();
+    pg.endDraw();
+    return pg.get();
+  }
+ 
 }
