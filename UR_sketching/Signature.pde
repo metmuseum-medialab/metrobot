@@ -10,8 +10,12 @@ class Signature {
   
   float DEFAULT_PREVIEW_SCALE = 1.0;
   float density = 0;
+
+  int signatureSize;
   
-  Signature(ArrayList<PVector> _sketchPoints) {
+  Signature(int _signatureSize, ArrayList<PVector> _sketchPoints) {
+
+  signatureSize = _signatureSize;
 
     //Normalize location
     for (int i=0; i<_sketchPoints.size(); i++)
@@ -22,7 +26,7 @@ class Signature {
     //sketchPoints = (ArrayList<PVector>)_sketchPoints.clone();
     
     //Get pixel density
-    PImage c = get(int(vSignatureDrawingSpace.x), int(vSignatureDrawingSpace.y), SIGNATURE_SIZE, SIGNATURE_SIZE);
+    PImage c = get(int(vSignatureDrawingSpace.x), int(vSignatureDrawingSpace.y), signatureSize, signatureSize);
     
     float _count = 0;
     
@@ -34,7 +38,7 @@ class Signature {
       
     }
     
-    density = 100* _count / (SIGNATURE_SIZE*SIGNATURE_SIZE);
+    density = 100* _count / (signatureSize*signatureSize);
     
     println("DENSITY : " + density);
     
@@ -65,7 +69,7 @@ class Signature {
 
     ArrayList<PVector> robotSketchPoints = new ArrayList<PVector>();
  
-    PVector _center = new PVector(mk.scale*SIGNATURE_SIZE*.5, mk.scale*SIGNATURE_SIZE*.5);
+    PVector _center = new PVector(mk.scale*signatureSize*.5, mk.scale*signatureSize*.5);
  
     for (int i=0;i<sketchPoints.size();i++)
     {
@@ -83,8 +87,8 @@ class Signature {
        
        _p.rotate((mk.rotation/360)*TWO_PI);
        
-       _p.x += mk.loc.x;
-       _p.y += mk.loc.y;
+       _p.x += mk.location.x;
+       _p.y += mk.location.y;
        
        
        //Get rid of out of bounds values
@@ -111,34 +115,18 @@ class Signature {
     return robotSketchPoints;
   }
 
-    void test() {
-      println("yehofjdsklf;as");
-    }
-  PImage generateRandomSignature() {
-    int sWidth = SIGNATURE_SIZE;
-    int sHeight = SIGNATURE_SIZE;
-    //a simple function for drawing an ugly bunch of lines, returns a pimage
+  PImage getPImage() {
+    int sWidth = signatureSize;
+    int sHeight = signatureSize;
     PGraphics pg = createGraphics(sWidth, sHeight);
     pg.beginDraw();
-    //pg.background(255);
     pg.noFill();
     pg.stroke(0);
     pg.strokeWeight(2);
     int vertexCount = int(random(2, 14));
     pg.beginShape();
-    if (random(1)<.6) {
-      for (int i = 0; i< vertexCount - 1; i++) {
-        pg.vertex(random(sWidth), random(sHeight));
-      }
-    } else {
-      for (int i = 0; i< vertexCount - 1; i++) {
-        int vx = int(random(sWidth));
-        int vy = int(random(sHeight));
-        if (i == 0 || i == vertexCount-1) {
-          pg.curveVertex(vx, vy);
-        }
-        pg.curveVertex(vx, vy);
-      }
+    for(PVector p: sketchPoints) {
+      pg.vertex(int(p.x), int(p.y));
     }
     pg.endShape();
     pg.endDraw();

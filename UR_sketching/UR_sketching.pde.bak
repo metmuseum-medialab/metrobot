@@ -121,7 +121,6 @@ void draw() {
     vertex(p.x, p.y);
   }
   endShape();
-<<<<<<< HEAD
   
   //
     // Receive data from server
@@ -179,18 +178,15 @@ void placeSignature() {
 
       ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
 
+      /*
       if (key == 'a') { 
           arrSignature.remove(0);
       }
-
+      */
+      
     }
 
     PLACING_SIGNATURE = false;
-  }
-  
-  if (key == 'j') {
-    
-    ur.getJointPositions();
   }
   
 }

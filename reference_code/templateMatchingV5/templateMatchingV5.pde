@@ -54,10 +54,10 @@ void draw() {
   //===============UPDATE CANVAS IMAGE (DELETE IF USING WEBCAM)==================================================
   //update our canvas image to contain this little drawing (all of this doesn't have to happen if we're using a webcam)
   //
-/*  PGraphics canvasGraphics = createGraphics(goalImg.width, goalImg.height);
+  PGraphics canvasGraphics = createGraphics(goalImg.width, goalImg.height);
   canvasGraphics.beginDraw();
   canvasGraphics.image(canvasImg, 0, 0);
-  canvasGraphics.endDraw();*/
+  canvasGraphics.endDraw();
 
   canvasImg.blend(sigImg, 
     0, 0, signatureWidth, signatureHeight, 
