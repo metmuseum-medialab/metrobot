@@ -23,6 +23,7 @@ class GoalDrawing {
   
   void drawPreview() {
     image(goalImg, 0, 0);
+    noTint();
   }
 
   MarkOrientation getSignatureLocation(CanvasStatus canv, Signature sig) {

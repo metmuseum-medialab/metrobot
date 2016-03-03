@@ -51,6 +51,8 @@ URCom ur; //make an instance of our URCom class for talking to this one robot
 
 boolean firstTouch = false; //have we started drawing?
 
+boolean PLACING_SIGNATURE = false;
+
 //*******************************************///
 // CODE MAIN
 //*******************************************//
@@ -85,12 +87,14 @@ void setup()
 }
 
 void draw() {
-  background(255);
   smooth();
+  background(255);
   
   goalDrawing.drawPreview();
-  
-  //Draw Preview View
+
+  canvasStatus.draw();  
+
+   //Draw Preview View
   previewView.drawPreview();
 
   
@@ -118,6 +122,9 @@ void draw() {
   }
   endShape();
 
+//  if (PLACING_SIGNATURE == false) {
+//    placeSignature();
+//  }
 }
 
 void keyPressed() {
@@ -156,32 +163,46 @@ void keyPressed() {
   }
   if (key == 'p') { // place a signature
 
-    ////// THIS IS WHERE THE MAGIC IS RIGHT NOW ////
-
-    if (arrSignature.size() > 0) {
-
-      // choose a signature
-      Signature thisSignature = arrSignature.get(0); 
-
-      // using webcam, update the status of the canvas
-      canvasStatus.update();
-
-      // using the templateMatcher, a signature, canvas status and goaldrawing, 
-      // generate a 'markorientation' - location, orientation, rotation
-      MarkOrientation mk = templateMatcher.placeSignature(goalDrawing, canvasStatus, thisSignature);
-
-      //Add to our view
-      previewView.addSignature(thisSignature.generateRobotMark(mk,true));
-
-      //Add to our canvas
-      canvasStatus.addSignature(thisSignature, mk);
-
-      // send points to UR for generating a mark
-      ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
-    }
+    placeSignature();
 
   }
 
+}
+
+
+void placeSignature() {
+    ////// THIS IS WHERE THE MAGIC IS RIGHT NOW ////
+
+  if (arrSignature.size() > 0) {
+    PLACING_SIGNATURE = true;
+
+    println( "placing SIG!");
+
+    // choose a signature
+    Signature thisSignature = arrSignature.get(arrSignature.size() - 1);
+    //Signature thisSignature = arrSignature.get(int(random(0, arrSignature.size())));
+
+
+    // using webcam, update the status of the canvas
+    canvasStatus.update();
+
+    // using the templateMatcher, a signature, canvas status and goaldrawing, 
+    // generate a 'markorientation' - location, orientation, rotation
+    MarkOrientation mk = templateMatcher.placeSignature(goalDrawing, canvasStatus, thisSignature);
+    println(mk);
+
+    //Add to our view
+    previewView.addSignature(thisSignature, mk);
+
+    //Add to our canvas
+    canvasStatus.addSignature(thisSignature, mk);
+
+    // send points to UR for generating a mark
+  //  ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
+  //  arrSignature.remove(0);
+  //
+    PLACING_SIGNATURE = false;
+  }
 }
 
 boolean validDrawingLocation() {
@@ -198,7 +219,7 @@ void mouseClicked() {
   if (firstTouch) {
     
     if (MODE_QUEUE) {
-      arrSignature.add(new Signature(sketchPoints));
+      arrSignature.add(new Signature(SIGNATURE_SIZE, sketchPoints));
     } else {
       //If no queue, just send signature right to robot
       

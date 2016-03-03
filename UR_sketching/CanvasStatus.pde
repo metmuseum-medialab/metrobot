@@ -9,10 +9,16 @@ class CanvasStatus {
   CanvasStatus(int w, int h) {
     canvasImg = createImage(w, h, RGB);
     canvasImg.loadPixels(); //load the empty pixel array
-    for(color p: canvasImg.pixels) {
-      p = color(255); // make canvas white
+    for (int i = 0; i < canvasImg.pixels.length; i++) {
+      canvasImg.pixels[i] = color(255); //make every pixel white
     }
     canvasImg.updatePixels(); //update the imge
+  }
+
+  void draw() {
+    tint(240, 240, 240, 200);
+    image(canvasImg, 0, 0);
+    noTint();
   }
 
   void update() {
@@ -20,7 +26,30 @@ class CanvasStatus {
   }
 
   void addSignature(Signature sig, MarkOrientation mk) {
-    // TODO: add signature to canvas
+/*    canvasImg.blend(sig.getPImage(), 
+    0, 0, sig.signatureSize, sig.signatureSize,
+    int(mk.location.x), int(mk.location.y), sig.signatureSize, sig.signatureSize,
+    DARKEST);*/
+  // TODO: implement rotation and scaling
+  //
+
+    PGraphics pg = createGraphics(sig.signatureSize * 2, sig.signatureSize * 2); 
+    pg.beginDraw();
+    pg.imageMode(CENTER);
+    pg.pushMatrix();
+    pg.noFill();
+    pg.stroke(0);
+    pg.strokeWeight(2);
+    pg.translate(pg.width / 2, pg.height / 2);
+    pg.rotate(radians(45));
+    pg.image(sig.getPImage(), 0, 0); 
+    pg.popMatrix();
+    pg.endDraw();
+    
+    canvasImg.blend(pg, 
+    0, 0, sig.signatureSize * 2, sig.signatureSize * 2,
+    int(mk.location.x) - sig.signatureSize, int(mk.location.y) - sig.signatureSize, sig.signatureSize * 2, sig.signatureSize * 2,
+    DARKEST);
   }
 
 } 

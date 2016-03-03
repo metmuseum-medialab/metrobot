@@ -6,38 +6,49 @@ class TemplateMatcher {
     
 
   MarkOrientation placeSignature(GoalDrawing goalDrawing, CanvasStatus canvasStatus, Signature thisSignature) {
-    println("HEYYYY!");
-    
-    //return new MarkOrientation(new PVector(APP_WIDTH/2, APP_HEIGHT/2), (random(1)+.5), random(360));
 
+    println ("heyyy!");
 
-  //PVector getSignatureLocation(PImage cameraPI, PImage goalPI, PImage signaturePI, float scale) {
-//    PImage goalImage = goalDrawing.goalImg.copy();
-//    PImage canvasImage = canvasStatus.canvasImg.copy();
-    return new MarkOrientation(new PVector(vRobotDrawingSpace.x/2, vRobotDrawingSpace.y/2), 1, 0);
-//    PImage signatureImage = signaturePI.copy();
+    return new MarkOrientation(new PVector(int(random(APP_WIDTH)), int(random(APP_HEIGHT))), (random(1)+.5), random(360));
 
-/*
-    goalImage.resize(int(goalImage.width*scale), 0);
-    canvasImage.resize(int(canvasImage.width*scale), 0);
-    signatureImage.resize(int(signatureImage.width*scale), 0);
+    /*
 
+    PImage goalImage = goalDrawing.goalImg.copy();
+    PImage canvasImage = canvasStatus.canvasImg.copy();
+    PImage signatureImage = thisSignature.getPImage().copy();
 
-    PImage differenceImg = createImage(goalImg.width, goalImg.height, RGB); //create blank difference image
-    differenceImg = getDifferenceImage(goalImage, canvasImage);//GET THE MACRO DIFFERENCE BETWEEN OUR CANVAS AND OUR GOAL IMAGE
-    differenceImg.loadPixels();
+    // resize images for speedup
+    float scaleForCalc = .5;  
+    goalImage.resize(int(goalImage.width * scaleForCalc), 0);
+    canvasImage.resize(int(canvasImage.width * scaleForCalc), 0);
+    signatureImage.resize(int(signatureImage.width * scaleForCalc), 0);
+
+    // generate difference image
+    PImage differenceImage = createImage(goalImage.width, goalImage.height, RGB); //create blank difference image
+    differenceImage = getDifferenceImage(goalImage, canvasImage);
+
+    differenceImage.loadPixels();
     canvasImage.loadPixels();
     signatureImage.loadPixels();
+
+    int sum = 0;
+    for (color p : canvasImage.pixels)
+        sum+= brightness(p);
+    println (" cumulative canvas brightness = " + sum);
+    
+
     int sWidth = signatureImage.width;
     int sHeight = signatureImage.height;
     int loopWidth = goalImage.width - sWidth - 1; //how many steps in our image matching loop
     int loopHeight = goalImage.height - sHeight - 1;//how many steps in our image matching loop
+
     int recordSum = 2147483640; //store our best sum
     int matchingCoordX = 0; //the location of our best match (i.e. signature location)
     int matchingCoordY = 0;
     int index; //where are we in pixel coordinates when looking through the image
-    for (int i = 0; i<loopHeight; i++) { //for EVERY signature sized square in the difference image, compare the signature to this image to see how well we match
-      for (int j = 0; j<loopWidth; j++) {
+
+    for (int i = 0; i < loopHeight; i++) { //for EVERY signature sized square in the difference image, compare the signature to this image to see how well we match
+      for (int j = 0; j < loopWidth; j++) {
         int movementSum = 0; // Amount of movement in the section
         int goalPixelAverage = 0;
         int cameraPixelAverage = 0;
@@ -57,7 +68,7 @@ class TemplateMatcher {
             int globalX = j+l;
             int globalY = i+k;
             index = globalX + globalY*goalImage.width;
-            color existingColor = differenceImg.pixels[index];
+            color existingColor = differenceImage.pixels[index];
             color signatureColor = signatureImage.pixels[l + k*sWidth];
             //WE ASSUME THE IMAGE IS ALREADY IN BLACK AND WHITE, THUS R,G,B ARE THE SAME
             int currR = (existingColor >> 16) & 0xFF;//get red of color
@@ -78,11 +89,63 @@ class TemplateMatcher {
         }
       }
     }
-    float rescaleMultiplier = 1.0/scale; //rescale our location if we've scaled the image down for performance
-    PVector sigLocation = new PVector(matchingCoordX*rescaleMultiplier, matchingCoordY*rescaleMultiplier); //return the location of the signature
-    return sigLocation;
-*/
+    MarkOrientation newMark = new MarkOrientation(
+        new PVector(matchingCoordX / scaleForCalc, matchingCoordY / scaleForCalc),
+        1,
+        0); //return the location of the signature
+    return newMark;
+    */
 
+  }
+
+
+  PImage getDifferenceImage(PImage image1, PImage image2) {
+    //returns the difference image from two images that are the same size, and black and white
+    //in this case, image2 is our "canvas image"
+    PImage theDifferenceImage = createImage(image1.width, image1.height, RGB);
+    image1.loadPixels();
+    image2.loadPixels();
+    int pixelCount = image1.width * image1.height;
+    for (int i = 0; i < pixelCount; i++) { // For each pixel in the video frame...
+      color img1Color = image1.pixels[i];
+      color img2Color = image2.pixels[i];
+      // Extract the red
+      int img1R = (img1Color >> 16) & 0xFF; // Like red(), but faster
+      // Extract red
+      int img2R = (img2Color >> 16) & 0xFF;
+      // Compute the difference of the red
+      int diffR = 0;
+      //if the canvas image is darker than it should be, we want to make it pure white to avoid having more stuff drawn on it...
+      if ((img1R - img2R)<0) { //canvas is brighter than the goal image, we want drawing to happen here
+        diffR = 255 - abs(img1R - img2R);//this function is relly iportnt to tweak...
+        //diffR  = img1R; //this would just return the actual color, not prioritizing areas that are MORE light than the canvas
+      } else if ((img1R-img2R)>=0) {  //canvas is darker than or equal to the goal image, we don't want drawing here, so make it white
+        diffR = 255;
+      }
+      // Add these differences to the running tally
+      // Render the difference image to the screen
+      theDifferenceImage.pixels[i] = color(diffR, diffR, diffR);
+      // The following line is much faster, but more confusing to read
+      //pixels[i] = 0xff000000 | (diffR << 16) | (diffG << 8) | diffB;
+      // Save the current color into the 'previous' buffer
+    }
+    theDifferenceImage.updatePixels();
+    return theDifferenceImage;
+  }
+
+  int getAverageColor(PImage theImg, int xPos, int yPos, int xWidth, int yHeight) {
+    int redValue = 0;
+    int pixelCount = xWidth*yHeight;
+    PImage theImgSection = theImg.get(xPos, yPos, xWidth, yHeight);
+    for (int i = 0; i<yHeight - 1; i++) {
+      for (int j = 0; j<xWidth - 1; j++) {
+        int theRed = theImg.pixels[j + i*xWidth];
+        redValue+=theRed;
+      }
+    }
+    int theAverage = int(redValue/pixelCount);
+    
+    return theAverage;
   }
 
 }

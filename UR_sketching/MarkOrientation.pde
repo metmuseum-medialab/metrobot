@@ -3,14 +3,18 @@ class MarkOrientation {
 
   // This class stores PVector, scale, rotation
 
-  PVector loc;
+  PVector location;
   float scale;
   float rotation;
 
-  MarkOrientation(PVector _loc, float _scale, float _rotation) {
-    loc = _loc;
+  MarkOrientation(PVector _location, float _scale, float _rotation) {
+    location = _location;
     scale = _scale;
     rotation = _rotation;
+  }
+
+  String toString() {
+    return "Location: " + location.toString() + " scale: " + scale + " rotation: " + rotation;
   }
 
 } 

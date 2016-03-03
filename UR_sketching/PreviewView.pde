@@ -21,9 +21,8 @@ class PreviewView {
     return new PVector(drawingBorder+random(vPreviewSpace.x), drawingBorder+random(vPreviewSpace.y) );
   }
   
-  void addSignature(ArrayList<PVector> _sketchPoints) {
-    
-    arrDrawings.add(_sketchPoints);
+  void addSignature(Signature sig, MarkOrientation mk) {
+    arrDrawings.add(sig.sketchPoints); 
   }
   
   void drawPreview() {
@@ -41,7 +40,7 @@ class PreviewView {
     strokeWeight(1);
     noFill();
 
-    for (int i=0; i<arrDrawings.size(); i++)
+/*    for (int i=0; i<arrDrawings.size(); i++)
     {
       beginShape();
       for (int j=0; j<arrDrawings.get(i).size(); j++) {
@@ -49,7 +48,7 @@ class PreviewView {
       }
       endShape();
     }
-
+*/
     //Debug output
     textSize(16);
     fill(255,0,0);
