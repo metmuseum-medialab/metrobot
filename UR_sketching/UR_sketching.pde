@@ -6,7 +6,7 @@
 final static int APP_WIDTH = 1000;
 final static int APP_HEIGHT = 1000;
 
-final boolean MODE_TESTING = true;
+final boolean MODE_TESTING = false;
 final boolean MODE_QUEUE = true;
 
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
@@ -129,39 +129,12 @@ void draw() {
 
 void keyPressed() {
    
-  // 'a' draw next value in queue
+  // 'p' draw next value in queue
   //
-  // 'q' draw next value and remove
+  // 'a' draw next value and remove
   //
-  if (key == 'q' || key == 'a') {
-    
-    //Pop out of Queue and Draw Preview
-    if (arrSignature.size() > 0) {
-        
-        //Find random point and scale in preview area
-        PVector _v = new PVector(0, 0); // previewView.getRandomPoint();
-        float _s = 1; //.5 + random(1);
 
-        println(_v);
-        
-        //We first call a funciton to conform the signature points in robot and preview space for the 
-        // given parameters: location, scale, rotation
-        //arrSignature.get(0).setSignaturePoints(_v, _s, 0);
-        
-        //Now we can send these points to the robot
-        //sendPointsToUR(arrSignature.get(0).robotSketchPoints);
-        
-        //Now we can add these points to the preview
-        //previewView.addSignature(arrSignature.get(0).previewSketchPoints);
-        
-        if (key == 'q') { 
-          arrSignature.remove(0);
-        }
- 
-        println(arrSignature.size());
-    }
-  }
-  if (key == 'p') { // place a signature
+  if (key == 'p' || key == 'a') { // place a signature
 
     placeSignature();
 
@@ -193,14 +166,18 @@ void placeSignature() {
 
     //Add to our view
     previewView.addSignature(thisSignature, mk);
+      
 
     //Add to our canvas
     canvasStatus.addSignature(thisSignature, mk);
 
     // send points to UR for generating a mark
-  //  ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
-  //  arrSignature.remove(0);
-  //
+    ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
+
+    if (key == 'a') { 
+        arrSignature.remove(0);
+    }
+
     PLACING_SIGNATURE = false;
   }
 }
