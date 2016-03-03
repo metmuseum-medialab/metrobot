@@ -80,7 +80,7 @@ void setup()
   Pose firstTarget = new Pose(); //make a new pose object to store our desired position and orientation of the tool
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
-  goalDrawing.loadFromImage("t.jpg"); //pollock_800.jpg");
+  goalDrawing.loadFromImage("pollock_800.jpg");
 
 }
 
@@ -117,6 +117,7 @@ void draw() {
     vertex(p.x, p.y);
   }
   endShape();
+
 }
 
 void keyPressed() {
@@ -161,7 +162,6 @@ void keyPressed() {
 
       // choose a signature
       Signature thisSignature = arrSignature.get(0); 
-      thisSignature.generateRandomSignature();
 
       // using webcam, update the status of the canvas
       canvasStatus.update();
@@ -180,9 +180,6 @@ void keyPressed() {
       ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
     }
 
-  }
-  if (key == 'r') { 
-    //new Signature.test();
   }
 
 }

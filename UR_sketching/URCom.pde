@@ -115,6 +115,7 @@ class URCom {
       }
     } else {
       for(Pose thisPose: pA) {
+        println("LIVE: Sketch points sent : " + thisPose.pos);
         moveL(thisPose);
       } 
     }
