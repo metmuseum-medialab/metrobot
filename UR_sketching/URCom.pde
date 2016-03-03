@@ -18,6 +18,8 @@ class URCom {
   float scaledZone = .0051; //the blend radius of our tool in m
   Pose [] moveLBuffer; //an array of movements that we store to send a chunk all at once
 
+  float zLift = 10;  //distance to lift between drawings
+
   String openingLines = "def urscript():\nsleep(3)\n"; //in case we want to send more data than just movements, put that text here
   String closingLines = "\nend\n"; //closing lines for the end of what we send
 
@@ -113,7 +115,7 @@ class URCom {
       }
     } else {
       for(Pose thisPose: pA) {
-        moveL(pA[i]);
+        moveL(thisPose);
       } 
     }
     sendString(closing);

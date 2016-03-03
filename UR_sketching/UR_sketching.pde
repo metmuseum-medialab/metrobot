@@ -1,13 +1,6 @@
-//RLJ 02/19/16 www.gshed.com
-//Connect to UR robot and send squiggles drawn on the screen when click event happens
-
-//Client ur;
-String input;
-int data[];
-String textToSend;
-
-//Array of signatures
-ArrayList<Signature> arrSignature = new ArrayList<Signature>();
+//*******************************************//
+// SETTINGS
+//*******************************************//
 
 //App Size
 final static int APP_WIDTH = 825;
@@ -16,32 +9,52 @@ final static int APP_HEIGHT = 500;
 final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
 
+final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
+final int ROBOT_PORT = 30002; //set the port of the robot
+
+final int SIGNATURE_SIZE = 200;
+
+// SET POINTS THAT DEFINE THE BASE PLANE OF OUR COORDINATE SYSTEM
+//these values should be read from the teachpendant screen and kept in the same units (Millimeters)
+final PVector origin = new PVector(174.85,269.00,-183.96); //this is the probed origin point of our local coordinate system.
+final PVector xPt = new PVector(191.05,-358.39,-181.29); //this is a point probed along the x axis of our local coordinate system
+final PVector yPt = new PVector(574.95,258.02,-194.25); //this is a point probed along the z axis of our local coordinate system
+
+final float lineMinLength = 5; //only register points on the screen if a given distance past the last saved point(keep from building up a million points at the same spot)
+
+//*******************************************//
+// Variables
+//*******************************************//
+
+//Client ur;
+String input;
+int data[];
+String textToSend;
+
+
 //Define the Robot drawing space. Currently i'm just using an arbitrary aspect ratio, and use it to define the preview space
 PVector vRobotDrawingSpace = new PVector(APP_WIDTH, APP_HEIGHT);
 PVector vRobotDrawingOffset = new PVector(-100,110);
-
-final int SIGNATURE_SIZE = 200;
 PVector vSignatureDrawingSpace = new PVector(0,APP_HEIGHT - SIGNATURE_SIZE);
+
+//Array of signatures
+ArrayList<Signature> arrSignature = new ArrayList<Signature>();
+
+ArrayList<PVector> sketchPoints = new ArrayList<PVector>();//store our drawing in this arraylist
 
 PreviewView previewView;
 GoalDrawing goalDrawing;
 CanvasStatus canvasStatus;
 TemplateMatcher templateMatcher;
+
 URCom ur; //make an instance of our URCom class for talking to this one robot
 
-//=================================NETWORKING DATA===========================================================================
-String ipAddress = "10.100.35.125"; //set the ip address of the robot
-int port = 30002; //set the port of the robot
-//===========================SET POINTS THAT DEFINE THE BASE PLANE OF OUR COORDINATE SYSTEM===================================
-//these values should be read from the teachpendant screen and kept in the same units (Millimeters)
-PVector origin = new PVector(174.85,269.00,-183.96); //this is the probed origin point of our local coordinate system.
-PVector xPt = new PVector(191.05,-358.39,-181.29); //this is a point probed along the x axis of our local coordinate system
-PVector yPt = new PVector(574.95,258.02,-194.25); //this is a point probed along the z axis of our local coordinate system
-//==============================VARIABLES FOR DRAWING============================================================
-ArrayList<PVector> sketchPoints = new ArrayList<PVector>();//store our drawing in this arraylist
-float minLength = 5; //only register points on the screen if a given distance past the last saved point(keep from building up a million points at the same spot)
 boolean firstTouch = false; //have we started drawing?
-float zLift = 10;  //distance to lift between drawings
+
+//*******************************************///
+// CODE MAIN
+//*******************************************//
+
 
 void setup() 
 {
@@ -51,7 +64,7 @@ void setup()
     ur = new URCom("testing"); 
   } else {
     ur = new URCom("socket"); 
-    ur.startSocket(this, ipAddress, port);
+    ur.startSocket(this, ROBOT_IP, ROBOT_PORT);
   }
 
   previewView = new PreviewView(vRobotDrawingSpace);
@@ -71,8 +84,7 @@ void setup()
 
 }
 
-void draw() 
-{
+void draw() {
   background(255);
   smooth();
   
@@ -87,7 +99,7 @@ void draw()
     //PVector currentPos = new PVector(mouseX,height-mouseY,0);
     PVector currentPos = new PVector(mouseX,mouseY,0);
 
-    if(PVector.dist(currentPos,sketchPoints.get(sketchPoints.size()-1)) > minLength){
+    if(PVector.dist(currentPos,sketchPoints.get(sketchPoints.size()-1)) > lineMinLength){
       sketchPoints.add(currentPos);
     }
   }
@@ -104,8 +116,6 @@ void draw()
   }
   endShape();
 
-  //PImage c = get(int(vSignatureDrawingSpace.x), int(vSignatureDrawingSpace.y), SIGNATURE_SIZE, SIGNATURE_SIZE);
-  //image(c,200,200);
 
 }
 
@@ -145,7 +155,7 @@ void keyPressed() {
   }
   if (key == 'p') { // place a signature
 
-    /////////// PSEUDOCODE HERE FOR TEMPLATE-MATCHING DRAWING OF SIGNATURE ONTO CANVAS //////
+    ////// THIS IS WHERE THE MAGIC IS RIGHT NOW ////
 
     if (arrSignature.size() > 0) {
 
