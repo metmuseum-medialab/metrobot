@@ -11,7 +11,6 @@ class TemplateMatcher {
 
     //return new MarkOrientation(new PVector(int(random(APP_WIDTH)), int(random(APP_HEIGHT))), (random(1)+.5), random(360));
     
-
     PImage goalImage = goalDrawing.goalImg.copy();
     PImage canvasImage = canvasStatus.canvasImg.copy();
     PImage signatureImage = thisSignature.getPImage().copy();
@@ -20,7 +19,12 @@ class TemplateMatcher {
     float scaleForCalc = .5;  
     goalImage.resize(int(goalImage.width * scaleForCalc), 0);
     canvasImage.resize(int(canvasImage.width * scaleForCalc), 0);
-    signatureImage.resize(int(signatureImage.width * scaleForCalc), 0);
+
+    float signatureScale = 1;
+    float signatureRotation = 0;
+    // TODO: implement signature scale and rotation here
+    signatureImage.resize(int(signatureImage.width * scaleForCalc * signatureScale), 0);
+
 
     // generate difference image
     PImage differenceImage = createImage(goalImage.width, goalImage.height, RGB); //create blank difference image
@@ -85,7 +89,7 @@ class TemplateMatcher {
     }
     MarkOrientation newMark = new MarkOrientation(
         new PVector(matchingCoordX / scaleForCalc, matchingCoordY / scaleForCalc),
-        1,
+        signatureScale,
         0); //return the location of the signature
     return newMark;
 

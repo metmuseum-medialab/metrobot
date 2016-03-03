@@ -218,7 +218,8 @@ void placeSignature() {
 
     // add signature to canvas
     canvasStatus.addSignature(thisSignature, mk);
-//    tempImg = canvasStatus.canvasImg.copy();
+
+    // this temporarily shows the difference image on the canvas
     println ("tempimg!");
     tempImg = templateMatcher.getDifferenceImage(goalDrawing.goalImg, canvasStatus.canvasImg);
     tempImg.resize(int(tempImg.width * .3), 0);
