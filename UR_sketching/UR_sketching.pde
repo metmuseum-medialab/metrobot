@@ -39,6 +39,7 @@ PVector vSignatureDrawingSpace = new PVector(0, vRobotDrawingSpace.y - SIGNATURE
 
 //Array of signatures
 ArrayList<Signature> arrSignature = new ArrayList<Signature>();
+ArrayList<Signature> arrUsedSignature = new ArrayList<Signature>();
 
 ArrayList<PVector> sketchPoints = new ArrayList<PVector>();//store our drawing in this arraylist
 
@@ -74,6 +75,8 @@ void setup()
   canvasStatus = new CanvasStatus(APP_WIDTH, APP_HEIGHT);
   templateMatcher = new TemplateMatcher();
 
+  println("!!!");
+
   Pose basePlane = new Pose(); //make a new "Pose" (Position and orientation) for our base plane
   basePlane.fromPoints(origin,xPt,yPt); //define the base plane based on our probed points
   ur.setWorkObject(basePlane); //set this base plane as our transformation matrix for subsequent movement operations
@@ -81,8 +84,10 @@ void setup()
   Pose firstTarget = new Pose(); //make a new pose object to store our desired position and orientation of the tool
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
+  println("!!!");
   goalDrawing.loadFromImage("hokusai_cropped.jpg");
 
+  println("!!!");
 }
 
 void draw() {
@@ -148,15 +153,35 @@ void keyPressed() {
 
   if (key == 'p' || key == 'a') { // place a signature
 
-    placeSignature();
+    placeSignature(true);
 
   }
 
 }
 
 
-void placeSignature() {
-  ////// THIS IS WHERE THE MAGIC IS RIGHT NOW ////
+Signature getNextSignature()
+{
+  Signature _sig;
+  
+  //If Still queue of unused
+  if (arrSignature.size() > 0) {
+    
+    _sig = arrSignature.get(0);
+    
+    arrSignature.remove(0);
+    arrUsedSignature.add(_sig);
+  } else {
+    
+    _sig = arrUsedSignature.get(int(random(0,arrUsedSignature.size())));
+  }
+  
+  return _sig;
+  
+}
+
+void placeSignature(boolean bRemoveQueue) {
+    ////// THIS IS WHERE THE MAGIC IS RIGHT NOW ////
 
   if (arrSignature.size() > 0) {
     PLACING_SIGNATURE = true;
@@ -164,8 +189,7 @@ void placeSignature() {
     println( "placing SIG!");
 
     // choose a signature
-    Signature thisSignature = arrSignature.get(arrSignature.size() - 1);
-    //Signature thisSignature = arrSignature.get(int(random(0, arrSignature.size())));
+    Signature thisSignature = getNextSignature(); //arrSignature.get(arrSignature.size() - 1);
 
 
     // using webcam, update the status of the canvas
@@ -176,19 +200,12 @@ void placeSignature() {
     MarkOrientation mk = templateMatcher.placeSignature(goalDrawing, canvasStatus, thisSignature);
     println(mk);
 
-    // add signature to canvas
-    canvasStatus.addSignature(thisSignature, mk);
-
-    // draw if relevant
-    if (key == 'a') { 
       ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
-      arrSignature.remove(0);
+
     }
 
+    PLACING_SIGNATURE = false;
   }
-
-  PLACING_SIGNATURE = false;
-}
 
 
 boolean validDrawingLocation() {
