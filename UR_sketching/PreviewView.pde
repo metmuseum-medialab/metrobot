@@ -53,6 +53,7 @@ class PreviewView {
     textSize(16);
     fill(255,0,0);
     text("Signature Queue Size: " + arrSignature.size(), 20, 40); 
+    text("Signature Used Queue Size: " + arrUsedSignature.size(), 20, 60); 
   }
  
 }
