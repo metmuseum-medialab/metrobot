@@ -3,8 +3,8 @@
 //*******************************************//
 
 //App Size
-final static int APP_WIDTH = 825;
-final static int APP_HEIGHT = 500;
+final static int APP_WIDTH = 1000;
+final static int APP_HEIGHT = 1000;
 
 final boolean MODE_TESTING = false;
 final boolean MODE_QUEUE = true;
@@ -12,7 +12,7 @@ final boolean MODE_QUEUE = true;
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
 final int ROBOT_PORT = 30002; //set the port of the robot
 
-final int SIGNATURE_SIZE = 200;
+final static int SIGNATURE_SIZE = 200;
 
 // SET POINTS THAT DEFINE THE BASE PLANE OF OUR COORDINATE SYSTEM
 //these values should be read from the teachpendant screen and kept in the same units (Millimeters)
@@ -35,7 +35,7 @@ String textToSend;
 //Define the Robot drawing space. Currently i'm just using an arbitrary aspect ratio, and use it to define the preview space
 PVector vRobotDrawingSpace = new PVector(APP_WIDTH, APP_HEIGHT);
 PVector vRobotDrawingOffset = new PVector(-100,110);
-PVector vSignatureDrawingSpace = new PVector(0,APP_HEIGHT - SIGNATURE_SIZE);
+static PVector vSignatureDrawingSpace = new PVector(0,APP_HEIGHT - SIGNATURE_SIZE);
 
 //Array of signatures
 ArrayList<Signature> arrSignature = new ArrayList<Signature>();
@@ -58,7 +58,7 @@ boolean firstTouch = false; //have we started drawing?
 
 void setup() 
 {
-  size(825, 500);
+  size(1000, 1000);
 
   if (MODE_TESTING) {
     ur = new URCom("testing"); 
@@ -80,7 +80,7 @@ void setup()
   Pose firstTarget = new Pose(); //make a new pose object to store our desired position and orientation of the tool
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
-  goalDrawing.loadFromImage("example_goal_image_2.jpg");
+  goalDrawing.loadFromImage("pollock_800.jpg");
 
 }
 
@@ -115,8 +115,6 @@ void draw() {
     vertex(p.x, p.y);
   }
   endShape();
-
-
 }
 
 void keyPressed() {
@@ -161,6 +159,7 @@ void keyPressed() {
 
       // choose a signature
       Signature thisSignature = arrSignature.get(0); 
+      thisSignature.generateRandomSignature();
 
       // using webcam, update the status of the canvas
       canvasStatus.update();
@@ -172,10 +171,16 @@ void keyPressed() {
       //Add to our view
       previewView.addSignature(thisSignature.generateRobotMark(mk,true));
 
+      //Add to our canvas
+      canvasStatus.addSignature(thisSignature, mk);
+
       // send points to UR for generating a mark
       ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
     }
 
+  }
+  if (key == 'r') { 
+    new Signature.test();
   }
 
 }
