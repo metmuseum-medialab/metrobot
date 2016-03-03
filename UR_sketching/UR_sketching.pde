@@ -10,26 +10,24 @@ String textToSend;
 ArrayList<Signature> arrSignature = new ArrayList<Signature>();
 
 //App Size
-final int APP_WIDTH = 825;
-final int APP_HEIGHT = 500;
+final static int APP_WIDTH = 825;
+final static int APP_HEIGHT = 500;
 
 final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
 
-//Drawing canvas size
-final int CANVAS_WIDTH = 825;
-final int CANVAS_HEIGHT = 500;
-
 //Define the Robot drawing space. Currently i'm just using an arbitrary aspect ratio, and use it to define the preview space
-PVector vRobotDrawingSpace = new PVector(CANVAS_WIDTH, CANVAS_HEIGHT);
+PVector vRobotDrawingSpace = new PVector(APP_WIDTH, APP_HEIGHT);
 PVector vRobotDrawingOffset = new PVector(-100,110);
 
 final int SIGNATURE_SIZE = 200;
-PVector vSignatureDrawingSpace = new PVector(0,APP_HEIGHT-SIGNATURE_SIZE);
+PVector vSignatureDrawingSpace = new PVector(0,APP_HEIGHT - SIGNATURE_SIZE);
 
-PreviewView previewView = new PreviewView(vRobotDrawingSpace);
-GoalDrawing goalDrawing = new GoalDrawing(vRobotDrawingSpace);
-CanvasStatus canvasStatus = new CanvasStatus(CANVAS_WIDTH, CANVAS_HEIGHT);
+PreviewView previewView;
+GoalDrawing goalDrawing;
+CanvasStatus canvasStatus;
+TemplateMatcher templateMatcher;
+URCom ur; //make an instance of our URCom class for talking to this one robot
 
 //=================================NETWORKING DATA===========================================================================
 String ipAddress = "10.100.35.125"; //set the ip address of the robot
@@ -39,12 +37,6 @@ int port = 30002; //set the port of the robot
 PVector origin = new PVector(174.85,269.00,-183.96); //this is the probed origin point of our local coordinate system.
 PVector xPt = new PVector(191.05,-358.39,-181.29); //this is a point probed along the x axis of our local coordinate system
 PVector yPt = new PVector(574.95,258.02,-194.25); //this is a point probed along the z axis of our local coordinate system
-//===============================SET ROBOT VARIABLES=================================================================
-URCom ur; //make an instance of our URCom class for talking to this one robot
-float radius = 1000; //set our blend radius in mm for movel and movep commands
-float speed = 10; //set our speed in mm/s
-String openingLines = "def urscript():\nsleep(3)\n"; //in case we want to send more data than just movements, put that text here
-String closingLines = "\nend\n"; //closing lines for the end of what we send
 //==============================VARIABLES FOR DRAWING============================================================
 ArrayList<PVector> sketchPoints = new ArrayList<PVector>();//store our drawing in this arraylist
 float minLength = 5; //only register points on the screen if a given distance past the last saved point(keep from building up a million points at the same spot)
@@ -61,7 +53,13 @@ void setup()
     ur = new URCom("socket"); 
     ur.startSocket(this, ipAddress, port);
   }
-  
+
+  previewView = new PreviewView(vRobotDrawingSpace);
+  goalDrawing = new GoalDrawing(vRobotDrawingSpace);
+  canvasStatus = new CanvasStatus(APP_WIDTH, APP_HEIGHT);
+  templateMatcher = new TemplateMatcher();
+
+
   Pose basePlane = new Pose(); //make a new "Pose" (Position and orientation) for our base plane
   basePlane.fromPoints(origin,xPt,yPt); //define the base plane based on our probed points
   ur.setWorkObject(basePlane); //set this base plane as our transformation matrix for subsequent movement operations
@@ -157,18 +155,15 @@ void keyPressed() {
       // using webcam, update the status of the canvas
       canvasStatus.update();
 
-      // using canvas status and goaldrawing, generate a 'markorientation' - location, orientation, rotation
-      // this is where the templateMatching would happen
-      MarkOrientation mk = goalDrawing.getSignatureLocation(canvasStatus, thisSignature); // TODO
+      // using the templateMatcher, a signature, canvas status and goaldrawing, 
+      // generate a 'markorientation' - location, orientation, rotation
+      MarkOrientation mk = templateMatcher.placeSignature(goalDrawing, canvasStatus, thisSignature);
 
       //Add to our view
       previewView.addSignature(thisSignature.generateRobotMark(mk,true));
 
       // send points to UR for generating a mark
-      //
-      if (MODE_TESTING == false) {
-            ur.sendPoints(thisSignature.generateRobotMark(mk,false)); // TODO
-      } 
+      ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
     }
 
   }

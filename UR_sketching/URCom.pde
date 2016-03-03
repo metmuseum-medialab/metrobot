@@ -18,6 +18,9 @@ class URCom {
   float scaledZone = .0051; //the blend radius of our tool in m
   Pose [] moveLBuffer; //an array of movements that we store to send a chunk all at once
 
+  String openingLines = "def urscript():\nsleep(3)\n"; //in case we want to send more data than just movements, put that text here
+  String closingLines = "\nend\n"; //closing lines for the end of what we send
+
   URCom(String comType) { //construct in either testing or serial mode
     if (comType == "testing") {
       testingMode = true;
@@ -102,15 +105,18 @@ class URCom {
   
   void bufferedMoveL(Pose [] pA, String opening, String closing){
     sendString(opening);
-    for(int i = 0; i<pA.length-1;i++){
-      //println(i);
-      //println(pA[i].pos);
-      moveL(pA[i]);
+
+
+    if (testingMode) {
+      for(Pose thisPose: pA) {
+        println("TESTING: Sketch points sent : " + thisPose.pos);
+      }
+    } else {
+      for(Pose thisPose: pA) {
+        moveL(pA[i]);
+      } 
     }
-    
     sendString(closing);
-    
-    
   }//send a pose array
 
   String formatPose(Pose framePose) {
@@ -158,7 +164,6 @@ class URCom {
     for(int i = 0; i< _sketchPoints.size(); i++){ //for each point in our arraylist
       Pose target = new Pose();//creat a new target pose
       
-      println("Sketch points sent : " + _sketchPoints.get(i).x + "," + _sketchPoints.get(i).y);
       
       target.fromTargetAndGuide(_sketchPoints.get(i), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
       poseArray[i+1] = target;
