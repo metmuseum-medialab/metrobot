@@ -26,7 +26,7 @@ class TemplateMatcher {
     // resize signature..
     signatureImage.resize(int(signatureImage.width * scaleForCalc * signatureScale), 0);
 
-    // rotate signature TODO: this is not quite working
+    // rotate signature TODO: this is not quite working.
     int sigScaledSize = int(thisSignature.signatureSize * scaleForCalc * signatureScale * 2);
     println( "TEMPLATEMACH signature original size = " + signatureImage.width + ", scaled = ", sigScaledSize); 
     PGraphics pg = createGraphics(sigScaledSize, sigScaledSize);
