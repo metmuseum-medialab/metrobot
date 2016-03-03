@@ -206,7 +206,8 @@ void placeSignature(boolean bRemoveQueue) {
 
     // add signature to canvas
     canvasStatus.addSignature(thisSignature, mk);
-//    tempImg = canvasStatus.canvasImg.copy();
+
+    // this temporarily shows the difference image on the canvas
     println ("tempimg!");
     tempImg = templateMatcher.getDifferenceImage(goalDrawing.goalImg, canvasStatus.canvasImg);
     tempImg.resize(int(tempImg.width * .3), 0);
@@ -219,7 +220,7 @@ void placeSignature(boolean bRemoveQueue) {
 
     PLACING_SIGNATURE = false;
   }
-
+}
 
 boolean validDrawingLocation() {
    if (mouseX >= vSignatureDrawingSpace.x && mouseX < vSignatureDrawingSpace.x + SIGNATURE_SIZE && mouseY > vSignatureDrawingSpace.y && mouseY < vSignatureDrawingSpace.y + SIGNATURE_SIZE)
