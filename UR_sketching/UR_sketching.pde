@@ -34,6 +34,7 @@ String textToSend;
 
 //START AUTO PLACE
 boolean autoPlace = false;
+boolean bShowImage = true;
 int signaturesPlacedCount = 0;
 
 
@@ -90,7 +91,7 @@ void setup()
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
   println("!!!");
-  goalDrawing.loadFromImage("vRobotDrawingSpace.jpg"); //"hokusai_cropped.jpg");
+  goalDrawing.loadFromImage("br1.jpg"); //"hokusai_cropped.jpg");
 
   println("!!!");
 }
@@ -101,14 +102,17 @@ void draw() {
   smooth();
   background(255);
   
-  goalDrawing.drawPreview();
-
+  if (bShowImage)
+  {
+    goalDrawing.drawPreview();
+  }
+  
   canvasStatus.draw();  
 
    //Draw Preview View
   previewView.drawPreview();
 
-  if (tempImg != null) { 
+  if (tempImg != null ) { 
     image(tempImg, 800,500);
   }
 
@@ -173,6 +177,12 @@ void keyPressed() {
   if (key == 'a') {
     autoPlace = !autoPlace;
   }
+  
+  //Hide image
+  if (key == 'i') {
+    bShowImage = !bShowImage;
+  }
+    
 }
 
 
@@ -227,9 +237,8 @@ void placeSignature() {
     // draw if relevant
     if (key == 'a') { 
       ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
-
     }
-
+    
     PLACING_SIGNATURE = false;
     signaturesPlacedCount++;
   }
