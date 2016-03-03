@@ -12,7 +12,7 @@ final boolean MODE_QUEUE = true;
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
 final int ROBOT_PORT = 30002; //set the port of the robot
 
-final static int SIGNATURE_SIZE = 200;
+final static int SIGNATURE_SIZE = 100; // APP_WIDTH has to be a multiple of signature_size
 
 // SET POINTS THAT DEFINE THE BASE PLANE OF OUR COORDINATE SYSTEM
 //these values should be read from the teachpendant screen and kept in the same units (Millimeters)
@@ -71,7 +71,7 @@ void setup()
   }
 
   previewView = new PreviewView(vRobotDrawingSpace);
-  goalDrawing = new GoalDrawing(vRobotDrawingSpace);
+  goalDrawing = new GoalDrawing(APP_WIDTH, APP_HEIGHT);
   canvasStatus = new CanvasStatus(APP_WIDTH, APP_HEIGHT);
   templateMatcher = new TemplateMatcher();
 
@@ -90,6 +90,8 @@ void setup()
   println("!!!");
 }
 
+PImage tempImg;
+
 void draw() {
   smooth();
   background(255);
@@ -101,7 +103,9 @@ void draw() {
    //Draw Preview View
   previewView.drawPreview();
 
-  
+  if (tempImg != null) { 
+    image(tempImg, 800,500);
+  }
 
   if(firstTouch && validDrawingLocation() ) {//if we've started drawing
   
@@ -200,6 +204,15 @@ void placeSignature(boolean bRemoveQueue) {
     MarkOrientation mk = templateMatcher.placeSignature(goalDrawing, canvasStatus, thisSignature);
     println(mk);
 
+    // add signature to canvas
+    canvasStatus.addSignature(thisSignature, mk);
+//    tempImg = canvasStatus.canvasImg.copy();
+    println ("tempimg!");
+    tempImg = templateMatcher.getDifferenceImage(goalDrawing.goalImg, canvasStatus.canvasImg);
+    tempImg.resize(int(tempImg.width * .3), 0);
+
+    // draw if relevant
+    if (key == 'a') { 
       ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
 
     }
