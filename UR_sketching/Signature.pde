@@ -71,22 +71,11 @@ class Signature {
     {
       
        PVector _p;
-       
-       if (bPreview == true)
-       {
-         _p = new PVector(
-             int(sketchPoints.get(i).x*DEFAULT_PREVIEW_SCALE*mk.scale),
-             int(sketchPoints.get(i).y*DEFAULT_PREVIEW_SCALE*mk.scale)
-           );
-           
-       } else {
-       
-         //Add the Y Normalization back in before we send to robot
-         _p = new PVector(
+ 
+       _p = new PVector(
            int(sketchPoints.get(i).x*mk.scale),
-           int((height-sketchPoints.get(i).y)*mk.scale)
-          );
-       }
+           int(sketchPoints.get(i).y*mk.scale)
+       );
        
        
        _p.x -= _center.x;
@@ -98,9 +87,16 @@ class Signature {
        _p.y += mk.loc.y;
        
        if (bPreview == false) {
+         
+         //Add the Y Normalization back in before we send to robot
+         //This needs to be moved to the last thing that is done
+         _p.y = height - _p.y;
+         
          _p.x += vRobotDrawingOffset.x;
          _p.y += vRobotDrawingOffset.y;
        }
+       
+       //println("[" + _p.x + "," + _p.y + "],");
        robotSketchPoints.add(_p);  
     }
     

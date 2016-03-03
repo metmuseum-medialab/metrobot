@@ -6,7 +6,7 @@
 final static int APP_WIDTH = 825;
 final static int APP_HEIGHT = 500;
 
-final boolean MODE_TESTING = true;
+final boolean MODE_TESTING = false;
 final boolean MODE_QUEUE = true;
 
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
@@ -197,7 +197,8 @@ void mouseClicked() {
       arrSignature.add(new Signature(sketchPoints));
     } else {
       //If no queue, just send signature right to robot
-      ur.sendPoints(sketchPoints);
+      
+      //ur.sendPoints(sketchPoints);
     }
 
    sketchPoints.clear();
@@ -213,5 +214,3 @@ void mouseClicked() {
   }
 
 }
-
-
