@@ -117,6 +117,18 @@ void draw() {
     vertex(p.x, p.y);
   }
   endShape();
+  
+  //
+    // Receive data from server
+    
+  if (MODE_TESTING == false)
+  {
+    if (ur.robClient.available() > 0) {
+      //println(ur.robClient.read());
+    }
+  }
+  
+
 }
 
 void keyPressed() {
@@ -151,13 +163,20 @@ void keyPressed() {
 
       // send points to UR for generating a mark
       ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
-      
+
       if (key == 'a') { 
           arrSignature.remove(0);
       }
+
     }
 
   }
+  
+  if (key == 'j') {
+    
+    ur.getJointPositions();
+  }
+  
   if (key == 'r') { 
     //new Signature.test();
   }

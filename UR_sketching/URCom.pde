@@ -19,6 +19,7 @@ class URCom {
   Pose [] moveLBuffer; //an array of movements that we store to send a chunk all at once
 
   float zLift = 10;  //distance to lift between drawings
+  float zLiftOut = 20;
 
   String openingLines = "def urscript():\nsleep(3)\n"; //in case we want to send more data than just movements, put that text here
   String closingLines = "\nend\n"; //closing lines for the end of what we send
@@ -73,12 +74,27 @@ class URCom {
     }
   }
 
+  void getJointPositions() {
+  
+    String _msg = " get_actual_joint_positions()\n";
+
+    sendString(openingLines);
+    
+    println(_msg);
+    
+    sendString(_msg);
+    sendString(closingLines);
+ 
+  }
+  
   void moveL(Pose fPose){
+        
     //movel(p[.535,.13,-.395,-1.20,2.90,0.00],v=0.30)\n a sample movel
     //movel(p[0.4666,0.3362,0.2317,1.20,-2.90,0.00],v=0.30,r=0.04212)\n another sample movel
     String msg = " movel(" + formatPose(fPose) + ",v=" + String.format("%.3f,", scaledV) + "r=" + String.format("%.5f", scaledZone) +", a=.001)\n";
     if (socketMode) {
       robClient.write(msg);
+      print("MoveL Command: " + msg + "*");
     } else if (testingMode) {
       print("Test MoveL Command: " + msg);
     }
@@ -154,12 +170,15 @@ class URCom {
     
     ///ADD THE LIFT POINTS TO THE BEGINNING AND END OF THE POSE ARRAY
     PVector aboveFirstPt = new PVector(_sketchPoints.get(0).x,_sketchPoints.get(0).y,_sketchPoints.get(0).z+zLift);
-    PVector aboveLastPt = new PVector(_sketchPoints.get(_sketchPoints.size()-1).x,_sketchPoints.get(_sketchPoints.size()-1).y,_sketchPoints.get(_sketchPoints.size()-1).z+zLift);
+    PVector aboveLastPt = new PVector(_sketchPoints.get(_sketchPoints.size()-1).x,_sketchPoints.get(_sketchPoints.size()-1).y,_sketchPoints.get(_sketchPoints.size()-1).z+zLiftOut);
     Pose aboveFirstPose = new Pose();
     Pose aboveLastPose = new Pose();
     aboveFirstPose.fromTargetAndGuide(aboveFirstPt,new PVector(0,0,-1));
     aboveLastPose.fromTargetAndGuide(aboveLastPt,new PVector(0,0,-1));
     poseArray[0] = aboveFirstPose;
+    
+    println("DEBUG LAST POINT : "+ _sketchPoints.size());
+    
     poseArray[_sketchPoints.size() + 1] = aboveLastPose; //something is off here...the above point isn't getting added...no time to debug...
     
     ///ADD ALL THE ACTUAL SKETCH POINTS TO OUR POSE ARRAY
