@@ -9,9 +9,8 @@ class TemplateMatcher {
 
     println ("heyyy!");
 
-    return new MarkOrientation(new PVector(int(random(APP_WIDTH)), int(random(APP_HEIGHT))), (random(1)+.5), random(360));
-
-    /*
+    //return new MarkOrientation(new PVector(int(random(APP_WIDTH)), int(random(APP_HEIGHT))), (random(1)+.5), random(360));
+    
 
     PImage goalImage = goalDrawing.goalImg.copy();
     PImage canvasImage = canvasStatus.canvasImg.copy();
@@ -31,11 +30,6 @@ class TemplateMatcher {
     canvasImage.loadPixels();
     signatureImage.loadPixels();
 
-    int sum = 0;
-    for (color p : canvasImage.pixels)
-        sum+= brightness(p);
-    println (" cumulative canvas brightness = " + sum);
-    
 
     int sWidth = signatureImage.width;
     int sHeight = signatureImage.height;
@@ -94,7 +88,6 @@ class TemplateMatcher {
         1,
         0); //return the location of the signature
     return newMark;
-    */
 
   }
 
@@ -102,6 +95,8 @@ class TemplateMatcher {
   PImage getDifferenceImage(PImage image1, PImage image2) {
     //returns the difference image from two images that are the same size, and black and white
     //in this case, image2 is our "canvas image"
+    println("image1 dimensions: " + image1.width + " x " + image1.height);
+    println("image2 dimensions: " + image2.width + " x " + image2.height);
     PImage theDifferenceImage = createImage(image1.width, image1.height, RGB);
     image1.loadPixels();
     image2.loadPixels();

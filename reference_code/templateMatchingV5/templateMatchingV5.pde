@@ -9,7 +9,7 @@ float scaleForCalculations = .5;  //our image processing is really slow, so we h
 
 void setup() {
   size(800, 800); //this should match the size of the goal image, which should also match the size of the robot coordinate space in mm...
-  goalImg=loadImage("pollock_800.jpg"); //our goal image
+  goalImg=loadImage("hokusai_cropped.jpg"); //our goal image
   sigImg = createImage(signatureWidth, signatureHeight, RGB);
 
   //===========================CREATE CANVAS (EQUIVALENT TO WEBCAM IMAGE)====================================
@@ -65,7 +65,7 @@ void draw() {
     BLEND);
 
   if (frameCount%30 == 0) {
-    saveFrame("BR3-#####.jpg");
+    saveFrame("exportimages/BR3-#####.jpg");
   }
   //==============END UPDATE CANVAS (DELETE IF USING WEBCAM)====================================================
 } //END DRAW

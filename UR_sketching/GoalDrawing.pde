@@ -3,35 +3,21 @@ class GoalDrawing {
 
   PImage goalImg;
 
-  int drawingBorder = 0;
-  PVector vPreviewSpace;
-  int topX, topY, bottomX, bottomY;
+  int goalW, goalH;
   
-  GoalDrawing(PVector _drawingSpace) {
- 
-    vPreviewSpace = new PVector(_drawingSpace.x, _drawingSpace.y);
- 
-    topX = drawingBorder; 
-    topY = drawingBorder; 
-    bottomX = drawingBorder + int(vPreviewSpace.x); 
-    bottomY = drawingBorder + int(vPreviewSpace.y);
+  GoalDrawing(int w, int h) {
+    goalW = w;
+    goalH = h;
   }
 
   void loadFromImage(String filename) { //loads a grayscale image for goal image
     goalImg = loadImage(filename);
+    goalImg.resize(goalW, goalH);
   }
   
   void drawPreview() {
     image(goalImg, 0, 0);
     noTint();
-  }
-
-  MarkOrientation getSignatureLocation(CanvasStatus canv, Signature sig) {
-    // TODO
-    
-    //
-    //return new MarkOrientation(new PVector(APP_WIDTH/2, APP_HEIGHT/2), (random(1)+.5), random(360));
-    return new MarkOrientation(new PVector(0,0), 1.0, 0.0);
   }
 
   void pointsToDraw() {
