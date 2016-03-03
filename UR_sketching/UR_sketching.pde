@@ -121,7 +121,7 @@ void draw() {
     vertex(p.x, p.y);
   }
   endShape();
-<<<<<<< HEAD
+
   
   //
     // Receive data from server
@@ -187,13 +187,7 @@ void placeSignature() {
 
     PLACING_SIGNATURE = false;
   }
-  
-  if (key == 'j') {
-    
-    ur.getJointPositions();
-  }
-  
-}
+
 
 boolean validDrawingLocation() {
    if (mouseX >= vSignatureDrawingSpace.x && mouseX < vSignatureDrawingSpace.x + SIGNATURE_SIZE && mouseY > vSignatureDrawingSpace.y && mouseY < vSignatureDrawingSpace.y + SIGNATURE_SIZE)
