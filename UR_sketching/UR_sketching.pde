@@ -76,7 +76,7 @@ void setup()
   }
 
   previewView = new PreviewView(vRobotDrawingSpace);
-  goalDrawing = new GoalDrawing(APP_WIDTH, APP_HEIGHT);
+  goalDrawing = new GoalDrawing(int(vRobotDrawingSpace.x), int(vRobotDrawingSpace.y)); //APP_WIDTH, APP_HEIGHT);
   canvasStatus = new CanvasStatus(APP_WIDTH, APP_HEIGHT);
   templateMatcher = new TemplateMatcher();
 
@@ -90,7 +90,7 @@ void setup()
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
   println("!!!");
-  goalDrawing.loadFromImage("hokusai_cropped.jpg");
+  goalDrawing.loadFromImage("vRobotDrawingSpace.jpg"); //"hokusai_cropped.jpg");
 
   println("!!!");
 }
