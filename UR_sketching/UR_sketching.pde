@@ -6,7 +6,7 @@
 final static int APP_WIDTH = 1000;
 final static int APP_HEIGHT = 1000;
 
-final boolean MODE_TESTING = false;
+final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
 
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
@@ -74,6 +74,7 @@ void setup()
   canvasStatus = new CanvasStatus(APP_WIDTH, APP_HEIGHT);
   templateMatcher = new TemplateMatcher();
 
+  println("!!!");
 
   Pose basePlane = new Pose(); //make a new "Pose" (Position and orientation) for our base plane
   basePlane.fromPoints(origin,xPt,yPt); //define the base plane based on our probed points
@@ -82,8 +83,10 @@ void setup()
   Pose firstTarget = new Pose(); //make a new pose object to store our desired position and orientation of the tool
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
-  goalDrawing.loadFromImage("pollock_800.jpg");
+  println("!!!");
+  goalDrawing.loadFromImage("hokusai_cropped.jpg");
 
+  println("!!!");
 }
 
 void draw() {
