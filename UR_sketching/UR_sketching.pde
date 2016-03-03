@@ -157,7 +157,7 @@ void keyPressed() {
 
   if (key == 'p' || key == 'a') { // place a signature
 
-    placeSignature(true);
+    placeSignature();
 
   }
 
@@ -184,10 +184,10 @@ Signature getNextSignature()
   
 }
 
-void placeSignature(boolean bRemoveQueue) {
+void placeSignature() {
     ////// THIS IS WHERE THE MAGIC IS RIGHT NOW ////
 
-  if (arrSignature.size() > 0) {
+  if (arrSignature.size() > 0 || arrUsedSignature.size() > 0) {
     PLACING_SIGNATURE = true;
 
     println( "placing SIG!");
@@ -219,7 +219,7 @@ void placeSignature(boolean bRemoveQueue) {
 
     PLACING_SIGNATURE = false;
   }
-
+}
 
 boolean validDrawingLocation() {
    if (mouseX >= vSignatureDrawingSpace.x && mouseX < vSignatureDrawingSpace.x + SIGNATURE_SIZE && mouseY > vSignatureDrawingSpace.y && mouseY < vSignatureDrawingSpace.y + SIGNATURE_SIZE)
