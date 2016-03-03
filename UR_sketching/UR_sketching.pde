@@ -32,6 +32,11 @@ int data[];
 String textToSend;
 
 
+//START AUTO PLACE
+boolean autoPlace = false;
+int signaturesPlacedCount = 0;
+
+
 //Define the Robot drawing space. Currently i'm just using an arbitrary aspect ratio, and use it to define the preview space
 PVector vRobotDrawingSpace = new PVector(825, 500);
 PVector vRobotDrawingOffset = new PVector(-100,110);
@@ -142,10 +147,14 @@ void draw() {
   }
   
 
+  if (autoPlace == true)
+  {
+    if (PLACING_SIGNATURE == false) {
+      placeSignature();
+    }
+  }
 
-//  if (PLACING_SIGNATURE == false) {
-//    placeSignature();
-//  }
+
 }
 
 void keyPressed() {
@@ -155,12 +164,15 @@ void keyPressed() {
   // 'a' draw next value and remove
   //
 
-  if (key == 'p' || key == 'a') { // place a signature
+  if (key == 'p') { // place a signature
 
     placeSignature();
 
   }
 
+  if (key == 'a') {
+    autoPlace = !autoPlace;
+  }
 }
 
 
@@ -218,6 +230,7 @@ void placeSignature() {
     }
 
     PLACING_SIGNATURE = false;
+    signaturesPlacedCount++;
   }
 }
 
