@@ -12,7 +12,7 @@ final boolean MODE_QUEUE = true;
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
 final int ROBOT_PORT = 30002; //set the port of the robot
 
-final static int SIGNATURE_SIZE = 100; // APP_WIDTH has to be a multiple of signature_size
+final static int SIGNATURE_SIZE = 50;
 
 // SET POINTS THAT DEFINE THE BASE PLANE OF OUR COORDINATE SYSTEM
 //these values should be read from the teachpendant screen and kept in the same units (Millimeters)
