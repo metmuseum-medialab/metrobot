@@ -20,10 +20,28 @@ class TemplateMatcher {
     goalImage.resize(int(goalImage.width * scaleForCalc), 0);
     canvasImage.resize(int(canvasImage.width * scaleForCalc), 0);
 
-    float signatureScale = 1;
-    float signatureRotation = 0;
-    // TODO: implement signature scale and rotation here
+    float signatureScale = random(0.2, 1.2);
+    float signatureRotation = radians(45);
+
+    // resize signature..
     signatureImage.resize(int(signatureImage.width * scaleForCalc * signatureScale), 0);
+
+    // rotate signature TODO: this is not quite working
+    int sigScaledSize = int(thisSignature.signatureSize * scaleForCalc * signatureScale * 2);
+    println( "TEMPLATEMACH signature original size = " + signatureImage.width + ", scaled = ", sigScaledSize); 
+    PGraphics pg = createGraphics(sigScaledSize, sigScaledSize);
+    pg.beginDraw();
+    pg.imageMode(CENTER);
+    pg.pushMatrix();
+    pg.noFill();
+    pg.stroke(0);
+    pg.strokeWeight(2);
+    pg.translate(pg.width / 2, pg.height / 2);
+    pg.rotate(signatureRotation);
+    pg.image(signatureImage, 0, 0); 
+    pg.popMatrix();
+    pg.endDraw();
+    signatureImage = pg;
 
 
     // generate difference image

@@ -28,8 +28,15 @@ class CanvasStatus {
   void addSignature(Signature sig, MarkOrientation mk) {
 
   // TODO: implement scaling
+  //
+  
+    int sigScaledSize = int(sig.signatureSize * mk.scale * 2);
+    println( "signature original size = " + sig.signatureSize + ", scaled = ", sigScaledSize); 
 
-    PGraphics pg = createGraphics(sig.signatureSize * 2, sig.signatureSize * 2); 
+    PImage sigCopy = sig.getPImage().copy();
+    sigCopy.resize(int(sigCopy.width * mk.scale), 0);
+
+    PGraphics pg = createGraphics(sigScaledSize, sigScaledSize);
     pg.beginDraw();
     pg.imageMode(CENTER);
     pg.pushMatrix();
@@ -38,14 +45,14 @@ class CanvasStatus {
     pg.strokeWeight(2);
     pg.translate(pg.width / 2, pg.height / 2);
     pg.rotate(mk.rotation);
-    pg.image(sig.getPImage(), 0, 0); 
+    pg.image(sigCopy, 0, 0); 
     pg.popMatrix();
     pg.endDraw();
     
     canvasImg.blend(pg, 
-    0, 0, sig.signatureSize * 2, sig.signatureSize * 2,
-    int(mk.location.x) - sig.signatureSize, int(mk.location.y) - sig.signatureSize, sig.signatureSize * 2, sig.signatureSize * 2,
-    DARKEST);
+    0, 0, sigScaledSize, sigScaledSize,
+    int(mk.location.x - (sig.signatureSize * mk.scale)), int(mk.location.y - (sig.signatureSize * mk.scale)), sigScaledSize, sigScaledSize,
+    BLEND);
   }
 
 } 
