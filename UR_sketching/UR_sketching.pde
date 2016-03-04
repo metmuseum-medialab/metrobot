@@ -3,8 +3,8 @@
 //*******************************************//
 
 //App Size
-final static int APP_WIDTH = 1000;
-final static int APP_HEIGHT = 1000;
+final static int APP_WIDTH = 825;
+final static int APP_HEIGHT = 500;
 
 final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
