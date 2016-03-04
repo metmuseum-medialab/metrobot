@@ -69,7 +69,11 @@ class URCom {
       robFeedbackClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
     }
   }
-  
+ 
+  float getRobotTotalSpeed() {
+    double[] rs = getRobotSpeed();
+    return abs((float)rs[0]) + abs((float)rs[1]) + abs((float)rs[2]);
+  }
   
   double[] getRobotSpeed() {
     

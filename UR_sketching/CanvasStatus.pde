@@ -5,9 +5,13 @@ class CanvasStatus {
   // This class is reponsible for moving the robot arm and updating the canvas, etc.
 
   PImage canvasImg;
+  int canvasW, canvasH;
 
   CanvasStatus(int w, int h) {
-    canvasImg = createImage(w, h, RGB);
+    canvasW = w;
+    canvasH = h;
+
+    canvasImg = createImage(canvasW, canvasH, RGB);
     canvasImg.loadPixels(); //load the empty pixel array
     for (int i = 0; i < canvasImg.pixels.length; i++) {
       canvasImg.pixels[i] = color(255); //make every pixel white
@@ -15,6 +19,19 @@ class CanvasStatus {
     canvasImg.updatePixels(); //update the imge
   }
 
+  void loadState(String filename) { // if image exists, loads a canvasstatus image
+    File f = new File(dataPath(filename));
+    if (f.exists()) {
+      println(filename + " exists!");
+      canvasImg = loadImage(filename);
+      canvasImg.resize(canvasW, canvasH);
+    }
+  }
+
+  void saveState(String filename) {
+    canvasImg.save(filename);
+  }
+  
   void draw() {
     tint(240, 240, 240, 200);
     image(canvasImg, 0, 0);
@@ -27,8 +44,6 @@ class CanvasStatus {
 
   void addSignature(Signature sig, MarkOrientation mk) {
 
-  // TODO: implement scaling
-  //
   
     int sigScaledSize = int(sig.signatureSize * mk.scale * 2);
     println( "signature original size = " + sig.signatureSize + ", scaled = ", sigScaledSize); 

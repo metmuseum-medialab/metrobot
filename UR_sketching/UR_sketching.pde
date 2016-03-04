@@ -8,7 +8,7 @@ import oscP5.*;
 final static int APP_WIDTH = 500;
 final static int APP_HEIGHT = 500;
 
-final boolean MODE_TESTING = false;
+final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
 
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
@@ -28,6 +28,9 @@ final PVector xPt = new PVector(191.05,-358.39,-181.29); //this is a point probe
 final PVector yPt = new PVector(828.66,-234.23,-181.25); //this is a point probed along the z axis of our local coordinate system
 
 final float lineMinLength = 5; //only register points on the screen if a given distance past the last saved point(keep from building up a million points at the same spot)
+
+final String GOAL_IMAGE = "br1.jpg"; 
+final String STATE_FILE = "160301breuer_saveState.jpg";
 
 //*******************************************//
 // Variables
@@ -102,8 +105,12 @@ void setup()
   Pose firstTarget = new Pose(); //make a new pose object to store our desired position and orientation of the tool
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
-  goalDrawing.loadFromImage("br1.jpg"); 
+  // set a goal Drawing
+  goalDrawing.loadFromImage(GOAL_IMAGE);
 
+  // load a save state 
+  canvasStatus.loadState(STATE_FILE);
+  
 }
 
 PImage tempImg;
@@ -168,20 +175,17 @@ void draw() {
       if(MODE_TESTING == false) {
         println("mode = false");
         
-        // 
         ur.startCommandSocket(this, ROBOT_IP, ROBOT_COMMAND_PORT);
         ur.startFeedbackSocket(this, ROBOT_IP, ROBOT_FEEDBACK_PORT);
         
-        if( abs((float)ur.getRobotSpeed()[0]) + abs((float)ur.getRobotSpeed()[1]) + abs((float)ur.getRobotSpeed()[2]) < 0.001 ) {
+        if( ur.getRobotTotalSpeed() < 0.001 ) {
 
           println("penspeed is < 0.001");
           
           //draw next
           placeSignature();
           delay(4000);
-          println("=============speed==============");
-          println("Speed ==== " + (abs((float)ur.getRobotSpeed()[0]) + abs((float)ur.getRobotSpeed()[1]) + abs((float)ur.getRobotSpeed()[2])));
-          println("==========end ===speed==============");
+          println("Speed ==== " + ur.getRobotTotalSpeed());
         }
       } else {
         placeSignature();
@@ -189,6 +193,10 @@ void draw() {
     }
   }
 
+
+  if (frameCount % 100 == 0) {
+    canvasStatus.saveState(dataPath(STATE_FILE));
+  }
 
 }
 
