@@ -1,3 +1,5 @@
+import oscP5.*;
+
 //*******************************************//
 // SETTINGS
 //*******************************************//
@@ -60,6 +62,9 @@ boolean firstTouch = false; //have we started drawing?
 
 boolean PLACING_SIGNATURE = false;
 
+
+OscP5 oscP5;
+
 //*******************************************///
 // CODE MAIN
 //*******************************************//
@@ -69,6 +74,9 @@ void setup()
 {
   size(1000, 1000);
 
+  /* start oscP5, listening for incoming messages at port 12000 */
+  oscP5 = new OscP5(this,12345);
+  
   if (MODE_TESTING) {
     ur = new URCom("testing"); 
   } else {
@@ -276,5 +284,13 @@ void mouseClicked() {
    PVector pos = new PVector(mouseX,mouseY,0);
    sketchPoints.add(pos);
   }
+}
 
+/* incoming osc message are forwarded to the oscEvent method. */
+void oscEvent(OscMessage theOscMessage) {
+
+  /* print the address pattern and the typetag of the received OscMessage */
+  print("### received an osc message.");
+  theOscMessage.print();
+  //println(" typetag: "+theOscMessage.typetag());
 }
