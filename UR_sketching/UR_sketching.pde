@@ -111,12 +111,10 @@ void setup()
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
   // set a goal Drawing
-  if(LOAD_STATE) {
     goalDrawing.loadFromImage(GOAL_IMAGE);
-  }
 
   // load a save state 
-  if(SAVE_STATE) {
+  if(LOAD_STATE) {
     canvasStatus.loadState(STATE_FILE);
   }
   
@@ -203,10 +201,11 @@ void draw() {
   }
 
 
-  if (frameCount % 100 == 0) {
-    canvasStatus.saveState(dataPath(STATE_FILE));
+  if(SAVE_STATE) {
+    if (frameCount % 100 == 0) {
+      canvasStatus.saveState(dataPath(STATE_FILE));
+    }
   }
-
 }
 
 void keyPressed() {
