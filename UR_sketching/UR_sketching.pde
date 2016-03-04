@@ -142,8 +142,7 @@ void draw() {
   endShape();
 
   
-  //
-    // Receive data from server
+
   /*
   if (MODE_TESTING == false)
   {
@@ -160,6 +159,11 @@ void draw() {
   
       if(MODE_TESTING == false) {
         println("mode = false");
+        
+        // 
+        ur.startCommandSocket(this, ROBOT_IP, ROBOT_COMMAND_PORT);
+        ur.startFeedbackSocket(this, ROBOT_IP, ROBOT_FEEDBACK_PORT);
+        
         if( abs((float)ur.getRobotSpeed()[0]) + abs((float)ur.getRobotSpeed()[1]) + abs((float)ur.getRobotSpeed()[2]) < 0.001 ) {
 
           println("penspeed is < 0.001");

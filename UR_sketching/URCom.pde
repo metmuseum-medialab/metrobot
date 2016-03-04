@@ -51,11 +51,23 @@ class URCom {
   }
 
   void startCommandSocket(PApplet theSketch, String theIPAddress, int thePort) { //initialize our serial communication
-    robMessageClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
+    if(robMessageClient == null) {
+       robMessageClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
+    }
+    if(robMessageClient.active() == false) {
+      robMessageClient.stop();
+      robMessageClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
+    }
   }
-
+  
   void startFeedbackSocket(PApplet theSketch, String theIPAddress, int thePort) { //initialize our serial communication
-    robFeedbackClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
+    if(robFeedbackClient == null) {
+       robFeedbackClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
+    }
+    if(robFeedbackClient.active() == false) {
+      robFeedbackClient.stop();
+      robFeedbackClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
+    }
   }
   
   
