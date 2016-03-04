@@ -202,6 +202,8 @@ void displayDouble(String title, double doubleVal, int left, int top){
         moveL(thisPose);
       } 
     }
+    
+    sendString("socket_send_string(\"done\")");
     sendString(closing);
   }//send a pose array
 
