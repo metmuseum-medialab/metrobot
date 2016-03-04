@@ -10,6 +10,9 @@ final static int APP_HEIGHT = 500;
 
 final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
+final boolean OSC_LISTEN = false;
+final boolean LOAD_STATE = false;
+final boolean SAVE_STATE = false;
 
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
 final int ROBOT_COMMAND_PORT = 30002; //set the port of the robot
@@ -29,8 +32,8 @@ final PVector yPt = new PVector(828.66,-234.23,-181.25); //this is a point probe
 
 final float lineMinLength = 5; //only register points on the screen if a given distance past the last saved point(keep from building up a million points at the same spot)
 
-final String GOAL_IMAGE = "br1.jpg"; 
-final String STATE_FILE = "160301breuer_saveState.jpg";
+final String GOAL_IMAGE = "calibration1.jpg"; 
+final String STATE_FILE = "160301_calibration1.jpg";
 
 //*******************************************//
 // Variables
@@ -83,7 +86,9 @@ void setup()
   size(1100, 500);
 
   /* start oscP5, listening for incoming messages at port 12000 */
-  oscP5 = new OscP5(this,12345);
+  if (OSC_LISTEN) {
+    oscP5 = new OscP5(this,12345);
+  }
   
   if (MODE_TESTING) {
     ur = new URCom("testing"); 
@@ -106,10 +111,14 @@ void setup()
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
   // set a goal Drawing
-  goalDrawing.loadFromImage(GOAL_IMAGE);
+  if(LOAD_STATE) {
+    goalDrawing.loadFromImage(GOAL_IMAGE);
+  }
 
   // load a save state 
-  canvasStatus.loadState(STATE_FILE);
+  if(SAVE_STATE) {
+    canvasStatus.loadState(STATE_FILE);
+  }
   
 }
 

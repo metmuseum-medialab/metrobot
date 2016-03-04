@@ -19,12 +19,15 @@ class TemplateMatcher {
     canvasImage.resize(int(canvasImage.width * scaleForCalc), 0);
 
     float signatureScale = random(0.4, 1.2);
-    float signatureRotation = radians(random(0, 360));
+    //float signatureRotation = radians(random(0, 360));
+    float signatureRotation = 0; //radians(random(0, 360));
 
     // resize signature..
     signatureImage.resize(int(signatureImage.width * scaleForCalc * signatureScale), 0);
 
+    /*
     // rotate signature 
+    // because we rotate the signature, the scale actually has to change, otherwise we risk cutting off the edges
     int sigScaledSize = int(thisSignature.signatureSize * scaleForCalc * signatureScale * 2);
     PGraphics pg = createGraphics(sigScaledSize, sigScaledSize);
     pg.beginDraw();
@@ -38,8 +41,11 @@ class TemplateMatcher {
     pg.image(signatureImage, 0, 0); 
     pg.popMatrix();
     pg.endDraw();
-    signatureImage = pg.get().copy();
+    signatureImage = pg.get().copy(); 
 
+    //println("original signature size = " + thisSignature.signatureSize + ", rotatedPGraphics = " + sigScaledSize);
+
+    */
     //println("nowsig = " + signatureImage.width);
 
 
