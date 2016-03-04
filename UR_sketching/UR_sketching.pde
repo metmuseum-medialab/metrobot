@@ -1,3 +1,5 @@
+//********** UR SKETCHING MAIN APP **********//
+
 import oscP5.*;
 
 //*******************************************//
@@ -8,7 +10,7 @@ import oscP5.*;
 final static int APP_WIDTH = 500;
 final static int APP_HEIGHT = 500;
 
-final boolean MODE_TESTING = false;
+final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
 final boolean OSC_LISTEN = false;
 final boolean LOAD_STATE = false;

@@ -1,7 +1,8 @@
-
 class MarkOrientation {
 
-  // This class stores PVector, scale, rotation
+  // This class stores PVector, scale, rotation, 
+  // and is combined with a Signature 
+  // in order to describe a mark placed somewhere on the canvas (in Processing coordinates)
 
   PVector location;
   float scale;

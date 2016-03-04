@@ -2,13 +2,11 @@
 
 class TemplateMatcher {
 
-  void TemplateMatcher() { } // constructor is useless - this is kind of a static class but not static so we can use random()
+  void TemplateMatcher() { } // constructor is useless - this is kind of a static/anonymously-used class but not static so we can use random()
     
 
   MarkOrientation placeSignature(GoalDrawing goalDrawing, CanvasStatus canvasStatus, Signature thisSignature) {
 
-    //return new MarkOrientation(new PVector(int(random(APP_WIDTH)), int(random(APP_HEIGHT))), (random(1)+.5), random(360));
-    
     PImage goalImage = goalDrawing.goalImg.copy();
     PImage canvasImage = canvasStatus.canvasImg.copy();
     PImage signatureImage = thisSignature.getPImage().copy();
@@ -26,6 +24,7 @@ class TemplateMatcher {
     signatureImage.resize(int(signatureImage.width * scaleForCalc * signatureScale), 0);
 
     /*
+    TODO: implement signature rotation
     // rotate signature 
     // because we rotate the signature, the scale actually has to change, otherwise we risk cutting off the edges
     int sigScaledSize = int(thisSignature.signatureSize * scaleForCalc * signatureScale * 2);
@@ -68,6 +67,9 @@ class TemplateMatcher {
     int index; //where are we in pixel coordinates when looking through the image
 
     //for EVERY signature sized square in the difference image, compare the signature to this image to see how well we match
+
+    // TODO: potentially reward lines that overlap with previous lines , so that we don't get a 'pixelllization'/'blotchiness' effect in our images
+    // TODO: potentially choose randomly from a list of 10 most accurate matches, so we have some diversity if a dark area dominates the image
     for (int i = 0; i < loopHeight; i++) { 
       for (int j = 0; j < loopWidth; j++) {
 
@@ -82,10 +84,9 @@ class TemplateMatcher {
         } else { 
  //         println("not darker than goal!!");
  //
+ //         TODO: outsource image differencing to a separate method
  //         TODO: use PImage.get (x,y,sx,sy) to get slices of image
  //         and then do the difference that way
- //         TODO: outsource image differencing to a separate method
- //         it's pretty messy right now
  //
           for (int k = 0; k < sHeight; k++) {
             for (int l = 0; l < sWidth; l++) {
@@ -117,6 +118,7 @@ class TemplateMatcher {
         new PVector(matchingCoordX / scaleForCalc, matchingCoordY / scaleForCalc),
         signatureScale,
         signatureRotation); //return the location of the signature
+
     return newMark;
 
   }

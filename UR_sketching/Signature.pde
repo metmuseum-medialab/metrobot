@@ -1,8 +1,8 @@
-/******************************
-*  Signature
-*
-******************************/
 class Signature {
+
+  // This class stores an array of vector points for a Signature
+  // and is combined with a MarkOrientation 
+  // in order to describe a mark placed somewhere on the canvas (in Processing coordinates)
 
   ArrayList<PVector> sketchPoints = new ArrayList<PVector>();  //store our drawing in this arraylist
   //ArrayList<PVector> previewSketchPoints = new ArrayList<PVector>();

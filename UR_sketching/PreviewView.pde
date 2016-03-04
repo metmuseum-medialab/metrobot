@@ -1,5 +1,9 @@
 
 class PreviewView {
+
+  // this class generates the preview for the drawing, but is a little bit deprecated -
+  // currently appears to only draw the borders of the image.
+  // TODO: wrap together with the diffDisplayImage and rename it as an 'InterfaceView' class
  
   ArrayList<ArrayList<PVector>> arrDrawings = new ArrayList<ArrayList<PVector>>();  //store our drawing in this arraylist
   
@@ -40,15 +44,7 @@ class PreviewView {
     strokeWeight(1);
     noFill();
 
-/*    for (int i=0; i<arrDrawings.size(); i++)
-    {
-      beginShape();
-      for (int j=0; j<arrDrawings.get(i).size(); j++) {
-         vertex(arrDrawings.get(i).get(j).x + drawingBorder, arrDrawings.get(i).get(j).y + drawingBorder);
-      }
-      endShape();
-    }
-*/
+
     //Debug output
     textSize(16);
     fill(255,0,0);
