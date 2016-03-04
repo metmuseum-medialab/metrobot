@@ -10,6 +10,9 @@ final static int APP_HEIGHT = 500;
 
 final boolean MODE_TESTING = false;
 final boolean MODE_QUEUE = true;
+final boolean OSC_LISTEN = false;
+final boolean LOAD_STATE = false;
+final boolean SAVE_STATE = false;
 
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
 final int ROBOT_COMMAND_PORT = 30002; //set the port of the robot
@@ -29,8 +32,8 @@ final PVector yPt = new PVector(828.66,-234.23,-181.25); //this is a point probe
 
 final float lineMinLength = 5; //only register points on the screen if a given distance past the last saved point(keep from building up a million points at the same spot)
 
-final String GOAL_IMAGE = "br1.jpg"; 
-final String STATE_FILE = "160301breuer_saveState.jpg";
+final String GOAL_IMAGE = "calibration1.jpg"; 
+final String STATE_FILE = "160301_calibration1.jpg";
 
 //*******************************************//
 // Variables
@@ -83,7 +86,13 @@ void setup()
   size(1100, 500);
 
   /* start oscP5, listening for incoming messages at port 12000 */
-  oscP5 = new OscP5(this,12346);
+
+  if (OSC_LISTEN) {
+  OscProperties myProperties = new OscProperties();
+  myProperties.setDatagramSize(30000); 
+  myProperties.setListeningPort(12345);
+  oscP5 = new OscP5(this,myProperties);
+  }
   
   if (MODE_TESTING) {
     ur = new URCom("testing"); 
@@ -106,10 +115,12 @@ void setup()
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
   // set a goal Drawing
-  goalDrawing.loadFromImage(GOAL_IMAGE);
+    goalDrawing.loadFromImage(GOAL_IMAGE);
 
   // load a save state 
-  canvasStatus.loadState(STATE_FILE);
+  if(LOAD_STATE) {
+    canvasStatus.loadState(STATE_FILE);
+  }
   
 }
 
@@ -194,10 +205,11 @@ void draw() {
   }
 
 
-  if (frameCount % 100 == 0) {
-    canvasStatus.saveState(dataPath(STATE_FILE));
+  if(SAVE_STATE) {
+    if (frameCount % 100 == 0) {
+      canvasStatus.saveState(dataPath(STATE_FILE));
+    }
   }
-
 }
 
 void keyPressed() {
@@ -357,10 +369,48 @@ void mouseClicked() {
 }
 
 /* incoming osc message are forwarded to the oscEvent method. */
-void oscEvent(OscMessage theOscMessage) {
-
+void oscEvent(OscMessage _osc) {
+  
+  ArrayList<PVector> oscSketchPoints = new ArrayList<PVector>();//store our drawing in this arraylist
+  
   /* print the address pattern and the typetag of the received OscMessage */
   print("### received an osc message.");
-  theOscMessage.print();
-  //println(" typetag: "+theOscMessage.typetag());
+
+  _osc.print();
+  
+  //println( _osc.arguments );
+  
+  println(_osc.addrPattern());
+  
+  println(" typetag: "+_osc.typetag());
+
+  String _type = _osc.typetag();
+  
+  for (int i=0; i<_type.length(); i++)
+  {
+     if ( i>0 && _type.charAt(i) == 's')
+     {
+        String _msg = _osc.get(i).toString();
+        String[] _arrPoints = split(_msg,",");
+        
+        for (int j=0; j<_arrPoints.length; j=j+3)
+        {
+           
+           if (float(_arrPoints[j]) < 0) { _arrPoints[j]="0";}
+           if (float(_arrPoints[j]) > 1) { _arrPoints[j]="1";}
+           
+           if (float(_arrPoints[j+1]) < 0) { _arrPoints[j]="0";}
+           if (float(_arrPoints[j+1]) > 1) { _arrPoints[j]="1";}
+           
+           oscSketchPoints.add(new PVector( (float(_arrPoints[j])*SIGNATURE_SIZE+vSignatureDrawingSpace.x), (float(_arrPoints[j+1])*SIGNATURE_SIZE + vSignatureDrawingSpace.y) )); 
+           
+           println("Add : " + _arrPoints[j] + "," + _arrPoints[j+1] + " " +(float(_arrPoints[j])*SIGNATURE_SIZE+SIGNATURE_SIZE + vSignatureDrawingSpace.x) + "," + (float(_arrPoints[j+1])*SIGNATURE_SIZE + vSignatureDrawingSpace.y));
+        }
+     }
+  }
+ 
+  //Add the signature
+  arrSignature.add(new Signature(SIGNATURE_SIZE, oscSketchPoints));
+
 }
+
