@@ -3,10 +3,10 @@
 //*******************************************//
 
 //App Size
-final static int APP_WIDTH = 825;
-final static int APP_HEIGHT = 500;
+final static int APP_WIDTH = 800;
+final static int APP_HEIGHT = 800;
 
-final boolean MODE_TESTING = true;
+final boolean MODE_TESTING = false;
 final boolean MODE_QUEUE = true;
 
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
@@ -39,7 +39,7 @@ int signaturesPlacedCount = 0;
 
 
 //Define the Robot drawing space. Currently i'm just using an arbitrary aspect ratio, and use it to define the preview space
-PVector vRobotDrawingSpace = new PVector(825, 500);
+PVector vRobotDrawingSpace = new PVector(800, 800);
 PVector vRobotDrawingOffset = new PVector(-100,110);
 PVector vSignatureDrawingSpace = new PVector(0, vRobotDrawingSpace.y - SIGNATURE_SIZE);
 
@@ -81,8 +81,6 @@ void setup()
   canvasStatus = new CanvasStatus(APP_WIDTH, APP_HEIGHT);
   templateMatcher = new TemplateMatcher();
 
-  println("!!!");
-
   Pose basePlane = new Pose(); //make a new "Pose" (Position and orientation) for our base plane
   basePlane.fromPoints(origin,xPt,yPt); //define the base plane based on our probed points
   ur.setWorkObject(basePlane); //set this base plane as our transformation matrix for subsequent movement operations
@@ -90,10 +88,8 @@ void setup()
   Pose firstTarget = new Pose(); //make a new pose object to store our desired position and orientation of the tool
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
-  println("!!!");
-  goalDrawing.loadFromImage("br1.jpg"); //"hokusai_cropped.jpg");
+  goalDrawing.loadFromImage("br1.jpg"); 
 
-  println("!!!");
 }
 
 PImage tempImg;
@@ -155,6 +151,7 @@ void draw() {
   {
     if (PLACING_SIGNATURE == false) {
       placeSignature();
+      if(MODE_TESTING == false) { delay(4500); } // this is the delay so that the robot can catch its breath.. need to fix 
     }
   }
 
@@ -235,9 +232,9 @@ void placeSignature() {
     tempImg.resize(int(tempImg.width * .3), 0);
 
     // draw if relevant
-    if (key == 'a') { 
+   // if (key == 'a') { 
       ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
-    }
+   // }
     
     PLACING_SIGNATURE = false;
     signaturesPlacedCount++;
