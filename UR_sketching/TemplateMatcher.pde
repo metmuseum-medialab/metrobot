@@ -20,10 +20,10 @@ class TemplateMatcher {
 
     float signatureScale = random(0.4, 1.2);
     //float signatureRotation = radians(random(0, 360));
-    float signatureRotation = 0; //radians(random(0, 360));
+    float signatureRotation = 0; 
 
     // resize signature..
-    signatureImage.resize(int(signatureImage.width * scaleForCalc * signatureScale), 0);
+    //signatureImage.resize(int(signatureImage.width * scaleForCalc * signatureScale), 0);
 
     /*
     // rotate signature 
@@ -43,11 +43,11 @@ class TemplateMatcher {
     pg.endDraw();
     signatureImage = pg.get().copy(); 
 
-    //println("original signature size = " + thisSignature.signatureSize + ", rotatedPGraphics = " + sigScaledSize);
 
     */
     //println("nowsig = " + signatureImage.width);
 
+    println("original signature size = " + thisSignature.getPImage().width + ", NEW oriented signature size = " + signatureImage.width);
 
     // generate difference image
     PImage differenceImage = createImage(goalImage.width, goalImage.height, RGB); //create blank difference image
@@ -56,7 +56,6 @@ class TemplateMatcher {
     differenceImage.loadPixels();
     canvasImage.loadPixels();
     signatureImage.loadPixels();
-
 
     int sWidth = signatureImage.width;
     int sHeight = signatureImage.height;
@@ -68,40 +67,41 @@ class TemplateMatcher {
     int matchingCoordY = 0;
     int index; //where are we in pixel coordinates when looking through the image
 
-    for (int i = 0; i < loopHeight; i++) { //for EVERY signature sized square in the difference image, compare the signature to this image to see how well we match
+    //for EVERY signature sized square in the difference image, compare the signature to this image to see how well we match
+    for (int i = 0; i < loopHeight; i++) { 
       for (int j = 0; j < loopWidth; j++) {
+
         int movementSum = 0; // Amount of movement in the section
         int goalPixelAverage = 0;
-        int cameraPixelAverage = 0;
+        int canvasPixelAverage = 0;
         boolean darkerThanGoal = false; //is our actual drawing darker than the goal image?  In this case, skip this calculation...
         goalPixelAverage = getAverageColor(goalImage, j, i, sWidth, sHeight);
-        cameraPixelAverage = getAverageColor(canvasImage, j, i, sWidth, sHeight);
-        if(goalPixelAverage >= cameraPixelAverage){
-          //if the goal image is lighter than our camera image
+        canvasPixelAverage = getAverageColor(canvasImage, j, i, sWidth, sHeight);
+        if(goalPixelAverage >= canvasPixelAverage){
+          //if the goal image is lighter than our canvas image
           movementSum = 2147483640; //set our movement sum as huge...
           darkerThanGoal = true; //set our darker than goal as true
         }
         //goalPixelAverage = goalImage.get(
         if(!darkerThanGoal){
-        for (int k = 0; k<sHeight-1; k++) {
-          for (int l = 0; l<sWidth-1; l++) {
-            //for each pixel in the image, get the difference and add it to the total movement value for this square
-            int globalX = j+l;
-            int globalY = i+k;
-            index = globalX + globalY*goalImage.width;
-            color existingColor = differenceImage.pixels[index];
-            color signatureColor = signatureImage.pixels[l + k*sWidth];
-            //WE ASSUME THE IMAGE IS ALREADY IN BLACK AND WHITE, THUS R,G,B ARE THE SAME
-            int currR = (existingColor >> 16) & 0xFF;//get red of color
-            int prevR = (signatureColor >> 16) & 0xFF; //get red of color
-            int diffR = abs(currR - prevR);
-            //int diffR = abs(currR*currR - prevR);
-            movementSum +=diffR;
-          }//end sampleLoop l
-        }//end sampleLoop k
-        }//end if not darker than goal
-
-        
+ //         println("not darker than goal!!");
+          for (int k = 0; k<sHeight-1; k++) {
+            for (int l = 0; l<sWidth-1; l++) {
+              //for each pixel in the image, get the difference and add it to the total movement value for this square
+              int globalX = j+l;
+              int globalY = i+k;
+              index = globalX + globalY*goalImage.width;
+              color existingColor = differenceImage.pixels[index];
+              color signatureColor = signatureImage.pixels[l + k*sWidth];
+              //WE ASSUME THE IMAGE IS ALREADY IN BLACK AND WHITE, THUS R,G,B ARE THE SAME
+              int currR = (existingColor >> 16) & 0xFF;//get red of color
+              int prevR = (signatureColor >> 16) & 0xFF; //get red of color
+              int diffR = abs(currR - prevR);
+              //int diffR = abs(currR*currR - prevR);
+              movementSum +=diffR;
+            }//end sampleLoop l
+          }//end sampleLoop k
+        }
 
         if (movementSum < recordSum) {
           recordSum = movementSum;
@@ -110,6 +110,7 @@ class TemplateMatcher {
         }
       }
     }
+
     MarkOrientation newMark = new MarkOrientation(
         new PVector(matchingCoordX / scaleForCalc, matchingCoordY / scaleForCalc),
         signatureScale,
@@ -154,14 +155,11 @@ class TemplateMatcher {
   }
 
   int getAverageColor(PImage theImg, int xPos, int yPos, int xWidth, int yHeight) {
-    int redValue = 0;
-    int pixelCount = xWidth*yHeight;
+    int pixelCount = xWidth * yHeight;
     PImage theImgSection = theImg.get(xPos, yPos, xWidth, yHeight);
-    for (int i = 0; i<yHeight - 1; i++) {
-      for (int j = 0; j<xWidth - 1; j++) {
-        int theRed = theImg.pixels[j + i*xWidth];
-        redValue+=theRed;
-      }
+    int redValue = 0;
+    for(color p: theImgSection.pixels) {
+      redValue += (p >> 16) & 0xFF; // Like red(), but faster
     }
     int theAverage = int(redValue/pixelCount);
     
