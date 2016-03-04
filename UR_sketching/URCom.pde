@@ -9,7 +9,7 @@ import processing.net.*;  //import processing library for TCP/IP communication
 
 class URCom {
 
-  Client robClient; //the robot client we'll be talking to
+  Client robMessageClient, robFeedbackClient; //the robot client we'll be talking to
   boolean testingMode = false; //setup two modes so the code can easily run if not connected
   boolean socketMode = false;
   PMatrix3D xForm = new PMatrix3D(); //create the identity matrix.  If we set a workobject, this will be used to transform coordinate systems
@@ -24,6 +24,11 @@ class URCom {
 
   String openingLines = "def urscript():\nsleep(3)\n"; //in case we want to send more data than just movements, put that text here
   String closingLines = "\nend\n"; //closing lines for the end of what we send
+  
+  byte[] byteArrayPrev = new byte[812];
+  int    byteArrayPrevLength = 0;
+  
+  RobotFeedback robotFeedback = new RobotFeedback();
 
   URCom(String comType) { //construct in either testing or serial mode
     if (comType == "testing") {
@@ -45,9 +50,71 @@ class URCom {
     }
   }
 
-  void startSocket(PApplet theSketch, String theIPAddress, int thePort) { //initialize our serial communication
-    robClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
+  void startCommandSocket(PApplet theSketch, String theIPAddress, int thePort) { //initialize our serial communication
+    robMessageClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
   }
+
+  void startFeedbackSocket(PApplet theSketch, String theIPAddress, int thePort) { //initialize our serial communication
+    robFeedbackClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
+  }
+  
+  
+  double[] getRobotSpeed() {
+    
+      int availableBytes = robFeedbackClient.available();
+      
+      if ( availableBytes > 0)
+      {
+       // println(robFeedbackClient.readString());
+        byte byteArray[] = robFeedbackClient.readBytes();
+        
+        int newLength = byteArray.length + byteArrayPrevLength;
+        
+        byte[] buffer = new byte[newLength];
+        System.arraycopy(byteArrayPrev, 0, buffer, 0, byteArrayPrevLength);
+        System.arraycopy(byteArray    , 0, buffer, byteArrayPrevLength, byteArray.length);
+
+        int len = buffer.length;
+        int srcPos = 0;
+        int iLoop = 0;
+        while ( len - srcPos >= 812 )
+        {
+          System.arraycopy(buffer,srcPos,robotFeedback.byteBuffer,0,812);
+          srcPos += 812;
+          robotFeedback.computeData();
+          
+        }
+        if ( srcPos < len )
+        {
+          byteArrayPrevLength = len-srcPos;
+          System.arraycopy(buffer,srcPos,byteArrayPrev,0,len-srcPos);
+        }else{
+          byteArrayPrevLength = 0;
+        }
+      }      
+      
+      return robotFeedback.tcp_speed;
+      /*displayDoubleArray("tool_vector", robotFeedback.tool_vector, 10, 70);
+      displayDoubleArray("q_actual", robotFeedback.q_actual, 100, 70);
+      displayDoubleArray("tcp_speed", robotFeedback.tcp_speed, 190, 70);
+      displayDouble("robot_mode", robotFeedback.robot_mode, 280, 70);*/
+    
+  } 
+
+void displayDoubleArray(String title, double[] doubleArray, int left, int top){
+  int lineHeight = 17;
+  text(title, left, top);
+  
+  for(int i=0; i<doubleArray.length; i++){
+    text((float)doubleArray[i], left, top + (1 + i) * lineHeight);
+  }
+}
+
+void displayDouble(String title, double doubleVal, int left, int top){
+  int lineHeight = 17;
+  text(title, left, top);
+  text((float)doubleVal, left, top + lineHeight);
+}
 
   void setWorkObject(Pose wObjDat) {
     //The workobject is a local coordinate frame you can define on the robot, then subsequent cartesian moves will be in this coordinate frame. 
@@ -94,7 +161,7 @@ class URCom {
     //movel(p[0.4666,0.3362,0.2317,1.20,-2.90,0.00],v=0.30,r=0.04212)\n another sample movel
     String msg = " movel(" + formatPose(fPose) + ",v=" + String.format("%.3f,", scaledV) + "r=" + String.format("%.5f", scaledZone) +", a=.001)\n";
     if (socketMode) {
-      robClient.write(msg);
+      robMessageClient.write(msg);
       print("MoveL Command: " + msg + "*");
     } else if (testingMode) {
       print("Test MoveL Command: " + msg);
@@ -108,7 +175,7 @@ class URCom {
     //set_tcp(p[0.0000,0.0000,0.0575,0.0000,0.0000,0.0000]) //example line
     String msg = "set_tcp(" + formatPose(toolDat) + ")\n";
     if (socketMode) {
-      robClient.write(msg);
+      robMessageClient.write(msg);
     } else if (testingMode) {
       print("Test SetTool Command: " + msg);
     }
@@ -116,7 +183,7 @@ class URCom {
   
   void sendString(String msg){
     if (socketMode) {
-      robClient.write(msg);
+      robMessageClient.write(msg);
     } else if (testingMode) {
       print("IN TESTING MODE, FOLLOWING MESSAGE NOT SENT: " + msg);
     }

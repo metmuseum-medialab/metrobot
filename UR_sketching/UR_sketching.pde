@@ -10,15 +10,20 @@ final boolean MODE_TESTING = false;
 final boolean MODE_QUEUE = true;
 
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
-final int ROBOT_PORT = 30002; //set the port of the robot
+final int ROBOT_COMMAND_PORT = 30002; //set the port of the robot
+final int ROBOT_FEEDBACK_PORT = 30003; //set the port of the robot
 
 final static int SIGNATURE_SIZE = 50;
 
 // SET POINTS THAT DEFINE THE BASE PLANE OF OUR COORDINATE SYSTEM
 //these values should be read from the teachpendant screen and kept in the same units (Millimeters)
+/*final PVector origin = new PVector(174.85,269.00,-183.96); //this is the probed origin point of our local coordinate system.
+final PVector xPt = new PVector(191.05,-358.39,-181.29); //this is a point probed along the x axis of our local coordinate system
+final PVector yPt = new PVector(574.95,258.02,-181.25); //this is a point probed along the z axis of our local coordinate system*/
+
 final PVector origin = new PVector(174.85,269.00,-183.96); //this is the probed origin point of our local coordinate system.
 final PVector xPt = new PVector(191.05,-358.39,-181.29); //this is a point probed along the x axis of our local coordinate system
-final PVector yPt = new PVector(574.95,258.02,-194.25); //this is a point probed along the z axis of our local coordinate system
+final PVector yPt = new PVector(828.66,-234.23,-181.25); //this is a point probed along the z axis of our local coordinate system
 
 final float lineMinLength = 5; //only register points on the screen if a given distance past the last saved point(keep from building up a million points at the same spot)
 
@@ -73,7 +78,8 @@ void setup()
     ur = new URCom("testing"); 
   } else {
     ur = new URCom("socket"); 
-    ur.startSocket(this, ROBOT_IP, ROBOT_PORT);
+    ur.startCommandSocket(this, ROBOT_IP, ROBOT_COMMAND_PORT);
+    ur.startFeedbackSocket(this, ROBOT_IP, ROBOT_FEEDBACK_PORT);
   }
 
   previewView = new PreviewView(vRobotDrawingSpace);
@@ -138,20 +144,36 @@ void draw() {
   
   //
     // Receive data from server
-    
+  /*
   if (MODE_TESTING == false)
   {
-    if (ur.robClient.available() > 0) {
-      //println(ur.robClient.read());
-    }
-  }
+
+
+
+  }*/
   
 
   if (autoPlace == true)
   {
     if (PLACING_SIGNATURE == false) {
-      placeSignature();
-      if(MODE_TESTING == false) { delay(4500); } // this is the delay so that the robot can catch its breath.. need to fix 
+
+  
+      if(MODE_TESTING == false) {
+        println("mode = false");
+        if( abs((float)ur.getRobotSpeed()[0]) + abs((float)ur.getRobotSpeed()[1]) + abs((float)ur.getRobotSpeed()[2]) < 0.001 ) {
+
+          println("penspeed is < 0.001");
+          
+          //draw next
+          placeSignature();
+          delay(4000);
+          println("=============speed==============");
+          println("Speed ==== " + (abs((float)ur.getRobotSpeed()[0]) + abs((float)ur.getRobotSpeed()[1]) + abs((float)ur.getRobotSpeed()[2])));
+          println("==========end ===speed==============");
+        }
+      } else {
+        placeSignature();
+      }
     }
   }
 
@@ -211,7 +233,7 @@ void placeSignature() {
   if (arrSignature.size() > 0 || arrUsedSignature.size() > 0) {
     PLACING_SIGNATURE = true;
 
-    println( "placing SIG!");
+    println( ">>>> WE ARE placing SIG!");
 
     // choose a signature
     Signature thisSignature = getNextSignature(); //arrSignature.get(arrSignature.size() - 1);
