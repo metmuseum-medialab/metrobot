@@ -46,7 +46,6 @@ class CanvasStatus {
 
   
     int sigScaledSize = int(sig.signatureSize * mk.scale * 2);
-    println( "signature original size = " + sig.signatureSize + ", scaled = ", sigScaledSize); 
 
     PImage sigCopy = sig.getPImage().copy();
     sigCopy.resize(int(sigCopy.width * mk.scale), 0);

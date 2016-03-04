@@ -7,8 +7,6 @@ class TemplateMatcher {
 
   MarkOrientation placeSignature(GoalDrawing goalDrawing, CanvasStatus canvasStatus, Signature thisSignature) {
 
-    println ("heyyy!");
-
     //return new MarkOrientation(new PVector(int(random(APP_WIDTH)), int(random(APP_HEIGHT))), (random(1)+.5), random(360));
     
     PImage goalImage = goalDrawing.goalImg.copy();
@@ -28,7 +26,6 @@ class TemplateMatcher {
 
     // rotate signature 
     int sigScaledSize = int(thisSignature.signatureSize * scaleForCalc * signatureScale * 2);
-    //println( "TEMPLATEMACH signature original size = " + signatureImage.width + ", scaled = ", sigScaledSize, " rotating it to =" + signatureRotation); 
     PGraphics pg = createGraphics(sigScaledSize, sigScaledSize);
     pg.beginDraw();
     pg.imageMode(CENTER);
@@ -119,8 +116,6 @@ class TemplateMatcher {
   PImage getDifferenceImage(PImage image1, PImage image2) {
     //returns the difference image from two images that are the same size, and black and white
     //in this case, image2 is our "canvas image"
-    println("image1 dimensions: " + image1.width + " x " + image1.height);
-    println("image2 dimensions: " + image2.width + " x " + image2.height);
     PImage theDifferenceImage = createImage(image1.width, image1.height, RGB);
     image1.loadPixels();
     image2.loadPixels();

@@ -208,11 +208,10 @@ void displayDouble(String title, double doubleVal, int left, int top){
   void bufferedMoveL(Pose [] pA, String opening, String closing){
     sendString(opening);
 
-
     if (testingMode) {
-      for(Pose thisPose: pA) {
-        println("TESTING: Sketch points sent : " + thisPose.pos);
-      }
+//      for(Pose thisPose: pA) {
+//        println("TESTING: Sketch points sent : " + thisPose.pos);
+//      }
     } else {
       for(Pose thisPose: pA) {
         moveL(thisPose);

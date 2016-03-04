@@ -80,7 +80,7 @@ OscP5 oscP5;
 
 void setup() 
 {
-  size(1000, 1000);
+  size(1100, 500);
 
   /* start oscP5, listening for incoming messages at port 12000 */
   oscP5 = new OscP5(this,12345);
@@ -113,7 +113,7 @@ void setup()
   
 }
 
-PImage tempImg;
+PImage diffDisplayImg;
 
 void draw() {
   smooth();
@@ -129,8 +129,8 @@ void draw() {
    //Draw Preview View
   previewView.drawPreview();
 
-  if (tempImg != null ) { 
-    image(tempImg, 800,500);
+  if (diffDisplayImg != null ) { 
+    image(diffDisplayImg, 600, 0);
   }
 
   if(firstTouch && validDrawingLocation() ) {//if we've started drawing
@@ -253,7 +253,7 @@ void placeSignature() {
   if (arrSignature.size() > 0 || arrUsedSignature.size() > 0) {
     PLACING_SIGNATURE = true;
 
-    println( ">>>> WE ARE placing SIG!");
+    println( ">>>> WE ARE placing SIG #" + signaturesPlacedCount);
 
     // choose a signature
     Signature thisSignature = getNextSignature(); //arrSignature.get(arrSignature.size() - 1);
@@ -271,18 +271,10 @@ void placeSignature() {
     canvasStatus.addSignature(thisSignature, mk);
 
     // this temporarily shows the difference image on the canvas
-    println ("tempimg!");
-    tempImg = templateMatcher.getDifferenceImage(goalDrawing.goalImg, canvasStatus.canvasImg);
-    tempImg.resize(int(tempImg.width * .3), 0);
+    diffDisplayImg = templateMatcher.getDifferenceImage(goalDrawing.goalImg, canvasStatus.canvasImg);
+    diffDisplayImg.resize(int(diffDisplayImg.width * 1.0), 0);
 
-    // draw if relevant
-   // if (key == 'a') { 
-      println("sig sketchpoints");
-      println(thisSignature.sketchPoints);
-      println("sig robotmark");
-      println(toRobotCoordinates(thisSignature.generateRobotMark(mk))); 
-      ur.sendPoints(toRobotCoordinates(thisSignature.generateRobotMark(mk))); 
-   // }
+    ur.sendPoints(toRobotCoordinates(thisSignature.generateRobotMark(mk))); 
     
     PLACING_SIGNATURE = false;
     signaturesPlacedCount++;
