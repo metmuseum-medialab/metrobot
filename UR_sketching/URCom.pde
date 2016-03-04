@@ -51,13 +51,29 @@ class URCom {
   }
 
   void startCommandSocket(PApplet theSketch, String theIPAddress, int thePort) { //initialize our serial communication
-    robMessageClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
-  }
-
-  void startFeedbackSocket(PApplet theSketch, String theIPAddress, int thePort) { //initialize our serial communication
-    robFeedbackClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
+    if(robMessageClient == null) {
+       robMessageClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
+    }
+    if(robMessageClient.active() == false) {
+      robMessageClient.stop();
+      robMessageClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
+    }
   }
   
+  void startFeedbackSocket(PApplet theSketch, String theIPAddress, int thePort) { //initialize our serial communication
+    if(robFeedbackClient == null) {
+       robFeedbackClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
+    }
+    if(robFeedbackClient.active() == false) {
+      robFeedbackClient.stop();
+      robFeedbackClient = new Client(theSketch, theIPAddress, thePort); //setup a new client
+    }
+  }
+ 
+  float getRobotTotalSpeed() {
+    double[] rs = getRobotSpeed();
+    return abs((float)rs[0]) + abs((float)rs[1]) + abs((float)rs[2]);
+  }
   
   double[] getRobotSpeed() {
     
@@ -192,11 +208,10 @@ void displayDouble(String title, double doubleVal, int left, int top){
   void bufferedMoveL(Pose [] pA, String opening, String closing){
     sendString(opening);
 
-
     if (testingMode) {
-      for(Pose thisPose: pA) {
-        println("TESTING: Sketch points sent : " + thisPose.pos);
-      }
+//      for(Pose thisPose: pA) {
+//        println("TESTING: Sketch points sent : " + thisPose.pos);
+//      }
     } else {
       for(Pose thisPose: pA) {
         moveL(thisPose);

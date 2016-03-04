@@ -10,6 +10,9 @@ final static int APP_HEIGHT = 500;
 
 final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
+final boolean OSC_LISTEN = false;
+final boolean LOAD_STATE = false;
+final boolean SAVE_STATE = false;
 
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
 final int ROBOT_COMMAND_PORT = 30002; //set the port of the robot
@@ -28,6 +31,9 @@ final PVector xPt = new PVector(191.05,-358.39,-181.29); //this is a point probe
 final PVector yPt = new PVector(828.66,-234.23,-181.25); //this is a point probed along the z axis of our local coordinate system
 
 final float lineMinLength = 5; //only register points on the screen if a given distance past the last saved point(keep from building up a million points at the same spot)
+
+final String GOAL_IMAGE = "calibration1.jpg"; 
+final String STATE_FILE = "160301_calibration1.jpg";
 
 //*******************************************//
 // Variables
@@ -77,13 +83,15 @@ OscP5 oscP5;
 
 void setup() 
 {
-  size(1000, 1000);
+  size(1100, 500);
 
   /* start oscP5, listening for incoming messages at port 12000 */
+  if (OSC_LISTEN) {
   OscProperties myProperties = new OscProperties();
   myProperties.setDatagramSize(30000); 
   myProperties.setListeningPort(12345);
   oscP5 = new OscP5(this,myProperties);
+  }
   
   if (MODE_TESTING) {
     ur = new URCom("testing"); 
@@ -105,11 +113,17 @@ void setup()
   Pose firstTarget = new Pose(); //make a new pose object to store our desired position and orientation of the tool
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
-  goalDrawing.loadFromImage("br1.jpg"); 
+  // set a goal Drawing
+    goalDrawing.loadFromImage(GOAL_IMAGE);
 
+  // load a save state 
+  if(LOAD_STATE) {
+    canvasStatus.loadState(STATE_FILE);
+  }
+  
 }
 
-PImage tempImg;
+PImage diffDisplayImg;
 
 void draw() {
   smooth();
@@ -125,8 +139,8 @@ void draw() {
    //Draw Preview View
   previewView.drawPreview();
 
-  if (tempImg != null ) { 
-    image(tempImg, 800,500);
+  if (diffDisplayImg != null ) { 
+    image(diffDisplayImg, 600, 0);
   }
 
   if(firstTouch && validDrawingLocation() ) {//if we've started drawing
@@ -153,8 +167,7 @@ void draw() {
   endShape();
 
   
-  //
-    // Receive data from server
+
   /*
   if (MODE_TESTING == false)
   {
@@ -171,16 +184,18 @@ void draw() {
   
       if(MODE_TESTING == false) {
         println("mode = false");
-        if( abs((float)ur.getRobotSpeed()[0]) + abs((float)ur.getRobotSpeed()[1]) + abs((float)ur.getRobotSpeed()[2]) < 0.001 ) {
+        
+        ur.startCommandSocket(this, ROBOT_IP, ROBOT_COMMAND_PORT);
+        ur.startFeedbackSocket(this, ROBOT_IP, ROBOT_FEEDBACK_PORT);
+        
+        if( ur.getRobotTotalSpeed() < 0.001 ) {
 
           println("penspeed is < 0.001");
           
           //draw next
           placeSignature();
           delay(4000);
-          println("=============speed==============");
-          println("Speed ==== " + (abs((float)ur.getRobotSpeed()[0]) + abs((float)ur.getRobotSpeed()[1]) + abs((float)ur.getRobotSpeed()[2])));
-          println("==========end ===speed==============");
+          println("Speed ==== " + ur.getRobotTotalSpeed());
         }
       } else {
         placeSignature();
@@ -189,6 +204,11 @@ void draw() {
   }
 
 
+  if(SAVE_STATE) {
+    if (frameCount % 100 == 0) {
+      canvasStatus.saveState(dataPath(STATE_FILE));
+    }
+  }
 }
 
 void keyPressed() {
@@ -244,7 +264,7 @@ void placeSignature() {
   if (arrSignature.size() > 0 || arrUsedSignature.size() > 0) {
     PLACING_SIGNATURE = true;
 
-    println( ">>>> WE ARE placing SIG!");
+    println( ">>>> WE ARE placing SIG #" + signaturesPlacedCount);
 
     // choose a signature
     Signature thisSignature = getNextSignature(); //arrSignature.get(arrSignature.size() - 1);
@@ -262,18 +282,10 @@ void placeSignature() {
     canvasStatus.addSignature(thisSignature, mk);
 
     // this temporarily shows the difference image on the canvas
-    println ("tempimg!");
-    tempImg = templateMatcher.getDifferenceImage(goalDrawing.goalImg, canvasStatus.canvasImg);
-    tempImg.resize(int(tempImg.width * .3), 0);
+    diffDisplayImg = templateMatcher.getDifferenceImage(goalDrawing.goalImg, canvasStatus.canvasImg);
+    diffDisplayImg.resize(int(diffDisplayImg.width * 1.0), 0);
 
-    // draw if relevant
-   // if (key == 'a') { 
-      println("sig sketchpoints");
-      println(thisSignature.sketchPoints);
-      println("sig robotmark");
-      println(toRobotCoordinates(thisSignature.generateRobotMark(mk))); 
-      ur.sendPoints(toRobotCoordinates(thisSignature.generateRobotMark(mk))); 
-   // }
+    ur.sendPoints(toRobotCoordinates(thisSignature.generateRobotMark(mk))); 
     
     PLACING_SIGNATURE = false;
     signaturesPlacedCount++;
@@ -362,6 +374,7 @@ void oscEvent(OscMessage _osc) {
   
   /* print the address pattern and the typetag of the received OscMessage */
   print("### received an osc message.");
+<<<<<<< HEAD
   _osc.print();
   
   //println( _osc.arguments );
@@ -399,3 +412,8 @@ void oscEvent(OscMessage _osc) {
   arrSignature.add(new Signature(SIGNATURE_SIZE, oscSketchPoints));
 
 }
+=======
+  theOscMessage.print();
+  //println(" typetag: "+theOscMessage.typetag());
+}
+>>>>>>> d9f0c7f857a9d12041aa57172813a1e812b7dd8d
