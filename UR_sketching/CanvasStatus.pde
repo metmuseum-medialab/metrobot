@@ -44,11 +44,20 @@ class CanvasStatus {
 
   void addSignature(Signature sig, MarkOrientation mk) {
 
-  
+
+    // put sig on a larger canvas 
     int sigScaledSize = int(sig.signatureSize * mk.scale * 2);
 
+    // scale the original signature
     PImage sigCopy = sig.getPImage().copy();
     sigCopy.resize(int(sigCopy.width * mk.scale), 0);
+
+ 
+    println(int(mk.location.x - ((sig.signatureSize * mk.scale)/2)));
+    println(sig.signatureSize);
+    println(sig.getPImage().width);
+    println(sigCopy.width);
+    println(mk.scale);
 
     PGraphics pg = createGraphics(sigScaledSize, sigScaledSize);
     pg.beginDraw();
@@ -61,11 +70,17 @@ class CanvasStatus {
     pg.rotate(mk.rotation);
     pg.image(sigCopy, 0, 0); 
     pg.popMatrix();
+    pg.imageMode(CORNER);
     pg.endDraw();
     
-    canvasImg.blend(pg, 
+    /*canvasImg.blend(pg, 
     0, 0, sigScaledSize, sigScaledSize,
     int(mk.location.x - (sig.signatureSize * mk.scale)), int(mk.location.y - (sig.signatureSize * mk.scale)), sigScaledSize, sigScaledSize,
+    BLEND); */
+    canvasImg.blend(pg, 
+    0, 0, sigScaledSize, sigScaledSize,
+    //int(mk.location.x - (sigScaledSize /2)), int(mk.location.y - (sigScaledSize / 2)), sigScaledSize, sigScaledSize,
+    int(mk.location.x - (sigScaledSize /4)), int(mk.location.y - (sigScaledSize / 4)), sigScaledSize, sigScaledSize,
     BLEND);
   }
 

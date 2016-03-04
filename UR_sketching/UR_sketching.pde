@@ -8,7 +8,7 @@ import oscP5.*;
 final static int APP_WIDTH = 500;
 final static int APP_HEIGHT = 500;
 
-final boolean MODE_TESTING = false;
+final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
 final boolean OSC_LISTEN = false;
 final boolean LOAD_STATE = false;
@@ -32,8 +32,8 @@ final PVector yPt = new PVector(828.66,-234.23,-181.25); //this is a point probe
 
 final float lineMinLength = 5; //only register points on the screen if a given distance past the last saved point(keep from building up a million points at the same spot)
 
-final String GOAL_IMAGE = "calibration1.jpg"; 
-final String STATE_FILE = "160301_calibration1.jpg";
+final String GOAL_IMAGE = "pollock_800.jpg"; 
+final String STATE_FILE = "160301_pollock_800_State1.jpg";
 
 //*******************************************//
 // Variables
@@ -225,6 +225,7 @@ void keyPressed() {
 
   if (key == 'a') {
     autoPlace = !autoPlace;
+    PLACING_SIGNATURE = false;
   }
   
   //Hide image

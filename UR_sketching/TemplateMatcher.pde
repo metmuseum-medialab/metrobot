@@ -23,7 +23,7 @@ class TemplateMatcher {
     float signatureRotation = 0; 
 
     // resize signature..
-    //signatureImage.resize(int(signatureImage.width * scaleForCalc * signatureScale), 0);
+    signatureImage.resize(int(signatureImage.width * scaleForCalc * signatureScale), 0);
 
     /*
     // rotate signature 
@@ -74,19 +74,21 @@ class TemplateMatcher {
         int movementSum = 0; // Amount of movement in the section
         int goalPixelAverage = 0;
         int canvasPixelAverage = 0;
-        boolean darkerThanGoal = false; //is our actual drawing darker than the goal image?  In this case, skip this calculation...
         goalPixelAverage = getAverageColor(goalImage, j, i, sWidth, sHeight);
         canvasPixelAverage = getAverageColor(canvasImage, j, i, sWidth, sHeight);
         if(goalPixelAverage >= canvasPixelAverage){
           //if the goal image is lighter than our canvas image
           movementSum = 2147483640; //set our movement sum as huge...
-          darkerThanGoal = true; //set our darker than goal as true
-        }
-        //goalPixelAverage = goalImage.get(
-        if(!darkerThanGoal){
+        } else { 
  //         println("not darker than goal!!");
-          for (int k = 0; k<sHeight-1; k++) {
-            for (int l = 0; l<sWidth-1; l++) {
+ //
+ //         TODO: use PImage.get (x,y,sx,sy) to get slices of image
+ //         and then do the difference that way
+ //         TODO: outsource image differencing to a separate method
+ //         it's pretty messy right now
+ //
+          for (int k = 0; k < sHeight; k++) {
+            for (int l = 0; l < sWidth; l++) {
               //for each pixel in the image, get the difference and add it to the total movement value for this square
               int globalX = j+l;
               int globalY = i+k;
