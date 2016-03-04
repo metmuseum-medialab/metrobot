@@ -3,8 +3,8 @@
 //*******************************************//
 
 //App Size
-final static int APP_WIDTH = 800;
-final static int APP_HEIGHT = 800;
+final static int APP_WIDTH = 500;
+final static int APP_HEIGHT = 500;
 
 final boolean MODE_TESTING = false;
 final boolean MODE_QUEUE = true;
@@ -39,7 +39,7 @@ int signaturesPlacedCount = 0;
 
 
 //Define the Robot drawing space. Currently i'm just using an arbitrary aspect ratio, and use it to define the preview space
-PVector vRobotDrawingSpace = new PVector(800, 800);
+PVector vRobotDrawingSpace = new PVector(500, 500);
 PVector vRobotDrawingOffset = new PVector(-100,110);
 PVector vSignatureDrawingSpace = new PVector(0, vRobotDrawingSpace.y - SIGNATURE_SIZE);
 
@@ -166,9 +166,7 @@ void keyPressed() {
   //
 
   if (key == 'p') { // place a signature
-
     placeSignature();
-
   }
 
   if (key == 'a') {
@@ -178,6 +176,10 @@ void keyPressed() {
   //Hide image
   if (key == 'i') {
     bShowImage = !bShowImage;
+  }
+    
+  if (key == 'b') {
+    drawBounds();
   }
     
 }
@@ -233,12 +235,57 @@ void placeSignature() {
 
     // draw if relevant
    // if (key == 'a') { 
-      ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
+      println("sig sketchpoints");
+      println(thisSignature.sketchPoints);
+      println("sig robotmark");
+      println(toRobotCoordinates(thisSignature.generateRobotMark(mk))); 
+      ur.sendPoints(toRobotCoordinates(thisSignature.generateRobotMark(mk))); 
    // }
     
     PLACING_SIGNATURE = false;
     signaturesPlacedCount++;
   }
+}
+
+
+ArrayList<PVector> toRobotCoordinates(ArrayList<PVector> pts) {
+
+  ArrayList<PVector> robotPts = new ArrayList<PVector>();
+
+  for (int i = 0;i < pts.size(); i++) {
+
+    PVector p = pts.get(i).copy();
+
+    //Get rid of out of bounds values
+    if (p.x < 0) {p.x = 0;}
+    if (p.x > vRobotDrawingSpace.x) {p.x = vRobotDrawingSpace.x;}
+    if (p.y < 0) {p.y = 0;}
+    if (p.y > vRobotDrawingSpace.y) {p.y = vRobotDrawingSpace.y;}
+
+    //Add the Y Normalization back in before we send to robot
+    //This needs to be moved to the last thing that is done
+    p.y = vRobotDrawingSpace.y - p.y;
+
+    p.x += vRobotDrawingOffset.x;
+    p.y += vRobotDrawingOffset.y;
+
+    robotPts.add(p);  
+  }
+  return robotPts;
+
+}
+
+void drawBounds() {
+  ArrayList<PVector> boundPoints = new ArrayList<PVector>();  //store our drawing in this arraylist
+
+  boundPoints.add(new PVector(0, 0));
+  boundPoints.add(new PVector(APP_WIDTH, 0));
+  boundPoints.add(new PVector(APP_WIDTH, APP_HEIGHT));
+  boundPoints.add(new PVector(0, APP_HEIGHT));
+  boundPoints.add(new PVector(0, 0));
+
+  println(boundPoints);
+  ur.sendPoints(toRobotCoordinates(boundPoints));
 }
 
 boolean validDrawingLocation() {
