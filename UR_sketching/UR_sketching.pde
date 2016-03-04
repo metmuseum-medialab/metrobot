@@ -5,22 +5,27 @@ import oscP5.*;
 //*******************************************//
 
 //App Size
-final static int APP_WIDTH = 1000;
-final static int APP_HEIGHT = 1000;
+final static int APP_WIDTH = 500;
+final static int APP_HEIGHT = 500;
 
-final boolean MODE_TESTING = true;
+final boolean MODE_TESTING = false;
 final boolean MODE_QUEUE = true;
 
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
-final int ROBOT_PORT = 30002; //set the port of the robot
+final int ROBOT_COMMAND_PORT = 30002; //set the port of the robot
+final int ROBOT_FEEDBACK_PORT = 30003; //set the port of the robot
 
 final static int SIGNATURE_SIZE = 50;
 
 // SET POINTS THAT DEFINE THE BASE PLANE OF OUR COORDINATE SYSTEM
 //these values should be read from the teachpendant screen and kept in the same units (Millimeters)
+/*final PVector origin = new PVector(174.85,269.00,-183.96); //this is the probed origin point of our local coordinate system.
+final PVector xPt = new PVector(191.05,-358.39,-181.29); //this is a point probed along the x axis of our local coordinate system
+final PVector yPt = new PVector(574.95,258.02,-181.25); //this is a point probed along the z axis of our local coordinate system*/
+
 final PVector origin = new PVector(174.85,269.00,-183.96); //this is the probed origin point of our local coordinate system.
 final PVector xPt = new PVector(191.05,-358.39,-181.29); //this is a point probed along the x axis of our local coordinate system
-final PVector yPt = new PVector(574.95,258.02,-194.25); //this is a point probed along the z axis of our local coordinate system
+final PVector yPt = new PVector(828.66,-234.23,-181.25); //this is a point probed along the z axis of our local coordinate system
 
 final float lineMinLength = 5; //only register points on the screen if a given distance past the last saved point(keep from building up a million points at the same spot)
 
@@ -41,7 +46,7 @@ int signaturesPlacedCount = 0;
 
 
 //Define the Robot drawing space. Currently i'm just using an arbitrary aspect ratio, and use it to define the preview space
-PVector vRobotDrawingSpace = new PVector(825, 500);
+PVector vRobotDrawingSpace = new PVector(500, 500);
 PVector vRobotDrawingOffset = new PVector(-100,110);
 PVector vSignatureDrawingSpace = new PVector(0, vRobotDrawingSpace.y - SIGNATURE_SIZE);
 
@@ -81,15 +86,14 @@ void setup()
     ur = new URCom("testing"); 
   } else {
     ur = new URCom("socket"); 
-    ur.startSocket(this, ROBOT_IP, ROBOT_PORT);
+    ur.startCommandSocket(this, ROBOT_IP, ROBOT_COMMAND_PORT);
+    ur.startFeedbackSocket(this, ROBOT_IP, ROBOT_FEEDBACK_PORT);
   }
 
   previewView = new PreviewView(vRobotDrawingSpace);
   goalDrawing = new GoalDrawing(int(vRobotDrawingSpace.x), int(vRobotDrawingSpace.y)); //APP_WIDTH, APP_HEIGHT);
   canvasStatus = new CanvasStatus(APP_WIDTH, APP_HEIGHT);
   templateMatcher = new TemplateMatcher();
-
-  println("!!!");
 
   Pose basePlane = new Pose(); //make a new "Pose" (Position and orientation) for our base plane
   basePlane.fromPoints(origin,xPt,yPt); //define the base plane based on our probed points
@@ -98,10 +102,8 @@ void setup()
   Pose firstTarget = new Pose(); //make a new pose object to store our desired position and orientation of the tool
   firstTarget.fromTargetAndGuide(new PVector(0,0,0), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
 
-  println("!!!");
-  goalDrawing.loadFromImage("br1.jpg"); //"hokusai_cropped.jpg");
+  goalDrawing.loadFromImage("br1.jpg"); 
 
-  println("!!!");
 }
 
 PImage tempImg;
@@ -150,19 +152,36 @@ void draw() {
   
   //
     // Receive data from server
-    
+  /*
   if (MODE_TESTING == false)
   {
-    if (ur.robClient.available() > 0) {
-      //println(ur.robClient.read());
-    }
-  }
+
+
+
+  }*/
   
 
   if (autoPlace == true)
   {
     if (PLACING_SIGNATURE == false) {
-      placeSignature();
+
+  
+      if(MODE_TESTING == false) {
+        println("mode = false");
+        if( abs((float)ur.getRobotSpeed()[0]) + abs((float)ur.getRobotSpeed()[1]) + abs((float)ur.getRobotSpeed()[2]) < 0.001 ) {
+
+          println("penspeed is < 0.001");
+          
+          //draw next
+          placeSignature();
+          delay(4000);
+          println("=============speed==============");
+          println("Speed ==== " + (abs((float)ur.getRobotSpeed()[0]) + abs((float)ur.getRobotSpeed()[1]) + abs((float)ur.getRobotSpeed()[2])));
+          println("==========end ===speed==============");
+        }
+      } else {
+        placeSignature();
+      }
     }
   }
 
@@ -177,9 +196,7 @@ void keyPressed() {
   //
 
   if (key == 'p') { // place a signature
-
     placeSignature();
-
   }
 
   if (key == 'a') {
@@ -189,6 +206,10 @@ void keyPressed() {
   //Hide image
   if (key == 'i') {
     bShowImage = !bShowImage;
+  }
+    
+  if (key == 'b') {
+    drawBounds();
   }
     
 }
@@ -220,7 +241,7 @@ void placeSignature() {
   if (arrSignature.size() > 0 || arrUsedSignature.size() > 0) {
     PLACING_SIGNATURE = true;
 
-    println( "placing SIG!");
+    println( ">>>> WE ARE placing SIG!");
 
     // choose a signature
     Signature thisSignature = getNextSignature(); //arrSignature.get(arrSignature.size() - 1);
@@ -243,13 +264,58 @@ void placeSignature() {
     tempImg.resize(int(tempImg.width * .3), 0);
 
     // draw if relevant
-    if (key == 'a') { 
-      ur.sendPoints(thisSignature.generateRobotMark(mk,false)); 
-    }
+   // if (key == 'a') { 
+      println("sig sketchpoints");
+      println(thisSignature.sketchPoints);
+      println("sig robotmark");
+      println(toRobotCoordinates(thisSignature.generateRobotMark(mk))); 
+      ur.sendPoints(toRobotCoordinates(thisSignature.generateRobotMark(mk))); 
+   // }
     
     PLACING_SIGNATURE = false;
     signaturesPlacedCount++;
   }
+}
+
+
+ArrayList<PVector> toRobotCoordinates(ArrayList<PVector> pts) {
+
+  ArrayList<PVector> robotPts = new ArrayList<PVector>();
+
+  for (int i = 0;i < pts.size(); i++) {
+
+    PVector p = pts.get(i).copy();
+
+    //Get rid of out of bounds values
+    if (p.x < 0) {p.x = 0;}
+    if (p.x > vRobotDrawingSpace.x) {p.x = vRobotDrawingSpace.x;}
+    if (p.y < 0) {p.y = 0;}
+    if (p.y > vRobotDrawingSpace.y) {p.y = vRobotDrawingSpace.y;}
+
+    //Add the Y Normalization back in before we send to robot
+    //This needs to be moved to the last thing that is done
+    p.y = vRobotDrawingSpace.y - p.y;
+
+    p.x += vRobotDrawingOffset.x;
+    p.y += vRobotDrawingOffset.y;
+
+    robotPts.add(p);  
+  }
+  return robotPts;
+
+}
+
+void drawBounds() {
+  ArrayList<PVector> boundPoints = new ArrayList<PVector>();  //store our drawing in this arraylist
+
+  boundPoints.add(new PVector(0, 0));
+  boundPoints.add(new PVector(APP_WIDTH, 0));
+  boundPoints.add(new PVector(APP_WIDTH, APP_HEIGHT));
+  boundPoints.add(new PVector(0, APP_HEIGHT));
+  boundPoints.add(new PVector(0, 0));
+
+  println(boundPoints);
+  ur.sendPoints(toRobotCoordinates(boundPoints));
 }
 
 boolean validDrawingLocation() {

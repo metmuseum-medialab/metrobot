@@ -65,7 +65,7 @@ class Signature {
     }
   }
 */
-  ArrayList<PVector> generateRobotMark(MarkOrientation mk, boolean bPreview) {
+  ArrayList<PVector> generateRobotMark(MarkOrientation mk) {
 
     ArrayList<PVector> robotSketchPoints = new ArrayList<PVector>();
  
@@ -91,24 +91,7 @@ class Signature {
        _p.y += mk.location.y;
        
        
-       //Get rid of out of bounds values
-       if (_p.x < 0) {_p.x = 0;}
-       if (_p.x > vRobotDrawingSpace.x) {_p.x = vRobotDrawingSpace.x;}
-       if (_p.y < 0) {_p.y = 0;}
-       if (_p.y > vRobotDrawingSpace.y) {_p.y = vRobotDrawingSpace.y;}
        
-       
-       if (bPreview == false) {
-         
-         //Add the Y Normalization back in before we send to robot
-         //This needs to be moved to the last thing that is done
-         _p.y = vRobotDrawingSpace.y - _p.y;
-         
-         _p.x += vRobotDrawingOffset.x;
-         _p.y += vRobotDrawingOffset.y;
-       }
-       
-       //println("[" + _p.x + "," + _p.y + "],");
        robotSketchPoints.add(_p);  
     }
     
