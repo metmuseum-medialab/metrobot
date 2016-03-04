@@ -8,7 +8,7 @@ import oscP5.*;
 final static int APP_WIDTH = 500;
 final static int APP_HEIGHT = 500;
 
-final boolean MODE_TESTING = true;
+final boolean MODE_TESTING = false;
 final boolean MODE_QUEUE = true;
 
 final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
@@ -83,7 +83,7 @@ void setup()
   size(1100, 500);
 
   /* start oscP5, listening for incoming messages at port 12000 */
-  oscP5 = new OscP5(this,12345);
+  oscP5 = new OscP5(this,12346);
   
   if (MODE_TESTING) {
     ur = new URCom("testing"); 
