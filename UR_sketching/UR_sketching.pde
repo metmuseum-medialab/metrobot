@@ -20,7 +20,7 @@ final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
 final int ROBOT_COMMAND_PORT = 30002; //set the port of the robot
 final int ROBOT_FEEDBACK_PORT = 30003; //set the port of the robot
 
-final static int SIGNATURE_SIZE = 50;
+final static int SIGNATURE_SIZE = 200;
 
 // SET POINTS THAT DEFINE THE BASE PLANE OF OUR COORDINATE SYSTEM
 //these values should be read from the teachpendant screen and kept in the same units (Millimeters)
@@ -71,7 +71,8 @@ TemplateMatcher templateMatcher;
 
 URCom ur; //make an instance of our URCom class for talking to this one robot
 
-boolean firstTouch = false; //have we started drawing?
+boolean sigFirstTouch = false; //have we started drawing?
+int sigPenPosition = 1;
 
 boolean PLACING_SIGNATURE = false;
 
@@ -146,11 +147,11 @@ void draw() {
     image(diffDisplayImg, 600, 0);
   }
 
-  if(firstTouch && validDrawingLocation() ) {//if we've started drawing
+  if(sigFirstTouch && validDrawingLocation() && sigPenPosition >= 0) {  //if we've started drawing
   
     //*Remove the Y normalization and only add in at end before sending points to robot
     //PVector currentPos = new PVector(mouseX,height-mouseY,0);
-    PVector currentPos = new PVector(mouseX,mouseY,0);
+    PVector currentPos = new PVector(mouseX,mouseY,sigPenPosition);
 
     if(PVector.dist(currentPos,sketchPoints.get(sketchPoints.size()-1)) > lineMinLength){
       sketchPoints.add(currentPos);
@@ -165,18 +166,19 @@ void draw() {
   for(PVector p: sketchPoints) {
     
     //*Remove the Y normalization and only add in at end before sending points to robot
+    
+    //If pen is up, end/start shape
+    if (p.z == -1) {
+      endShape();
+      beginShape();
+    }
     vertex(p.x, p.y);
   }
   endShape();
 
-  
-
   /*
   if (MODE_TESTING == false)
   {
-
-
-
   }*/
   
 
@@ -240,7 +242,23 @@ void keyPressed() {
   if (key == 'b') {
     drawBounds();
   }
+  
+  if (key == 's') {
     
+    //Add a signature
+    if (sigFirstTouch) {
+    
+      if (MODE_QUEUE) {
+        arrSignature.add(new Signature(SIGNATURE_SIZE, sketchPoints));
+      }
+
+      sketchPoints.clear();
+      
+      //reset to a new drawing
+      sigFirstTouch = false;
+    }
+   
+  } 
 }
 
 
@@ -350,23 +368,23 @@ boolean validDrawingLocation() {
 void mouseClicked() {
   
   //Add a signature
-  if (firstTouch) {
-    
-    if (MODE_QUEUE) {
-      arrSignature.add(new Signature(SIGNATURE_SIZE, sketchPoints));
-    } else {
-      //If no queue, just send signature right to robot
-      
-      //ur.sendPoints(sketchPoints);
-    }
+  if (sigFirstTouch) {
+   
+    //Switch pen position
+    sigPenPosition *= -1;
 
-   sketchPoints.clear();
-   //reset to a new drawing
-   firstTouch = false;
+    //If we are putting the pen down again, the first point has a pen up value
+    if (sigPenPosition == 1) {
+      
+      PVector _currentPos = new PVector(mouseX,mouseY,-1);
+      sketchPoints.add(_currentPos);
+    }
+    
   } else if (validDrawingLocation()) {
     
-   firstTouch = true;
-   
+   sigFirstTouch = true;
+   sigPenPosition = 1;
+
    //*Remove the Y normalization and only add in at end before sending points to robot
    PVector pos = new PVector(mouseX,mouseY,0);
    sketchPoints.add(pos);

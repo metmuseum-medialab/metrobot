@@ -20,7 +20,7 @@ class Signature {
     //Normalize location
     for (int i=0; i<_sketchPoints.size(); i++)
     {
-       sketchPoints.add(new PVector(_sketchPoints.get(i).x - vSignatureDrawingSpace.x, _sketchPoints.get(i).y - vSignatureDrawingSpace.y));
+       sketchPoints.add(new PVector(_sketchPoints.get(i).x - vSignatureDrawingSpace.x, _sketchPoints.get(i).y - vSignatureDrawingSpace.y, _sketchPoints.get(i).z));
        //sketchPoints.add(new PVector(_sketchPoints.get(i).x - vSignatureDrawingSpace.x , _sketchPoints.get(i).y - vSignatureDrawingSpace.y));
     }
     //sketchPoints = (ArrayList<PVector>)_sketchPoints.clone();
@@ -78,7 +78,8 @@ class Signature {
  
        _p = new PVector(
            int(sketchPoints.get(i).x*mk.scale),
-           int(sketchPoints.get(i).y*mk.scale)
+           int(sketchPoints.get(i).y*mk.scale),
+           int(sketchPoints.get(i).z)
        );
        
        
