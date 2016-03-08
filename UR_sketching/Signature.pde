@@ -108,12 +108,21 @@ class Signature {
     pg.stroke(0);
     pg.strokeWeight(2);
     int vertexCount = int(random(2, 14));
+
     pg.beginShape();
     for(PVector p: sketchPoints) {
+      
+      //If pen is up, end/start shape
+      if (p.z == -1) {
+        pg.endShape();
+        pg.beginShape();
+      }
+    
       pg.vertex(int(p.x), int(p.y));
     }
     pg.endShape();
     pg.endDraw();
+
     return pg.get();
   }
  
