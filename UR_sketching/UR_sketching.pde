@@ -20,7 +20,10 @@ final String ROBOT_IP = "10.100.35.125"; //set the ip address of the robot
 final int ROBOT_COMMAND_PORT = 30002; //set the port of the robot
 final int ROBOT_FEEDBACK_PORT = 30003; //set the port of the robot
 
-final static int SIGNATURE_SIZE = 200;
+final static int SIGNATURE_SIZE = 50;
+
+//final static float signatureScale = 1;
+
 
 // SET POINTS THAT DEFINE THE BASE PLANE OF OUR COORDINATE SYSTEM
 //these values should be read from the teachpendant screen and kept in the same units (Millimeters)
@@ -34,8 +37,8 @@ final PVector yPt = new PVector(828.66,-234.23,-181.25); //this is a point probe
 
 final float lineMinLength = 5; //only register points on the screen if a given distance past the last saved point(keep from building up a million points at the same spot)
 
-final String GOAL_IMAGE = "sol_lewitt_strokes2.jpg"; 
-final String STATE_FILE = "160301_sol_lewitt_strokes2.jpg_State1.jpg";
+final String GOAL_IMAGE = "br1.jpg"; 
+final String STATE_FILE = "br1_State1.jpg";
 
 //*******************************************//
 // Variables
@@ -151,7 +154,7 @@ void draw() {
   
     //*Remove the Y normalization and only add in at end before sending points to robot
     //PVector currentPos = new PVector(mouseX,height-mouseY,0);
-    PVector currentPos = new PVector(mouseX,mouseY,sigPenPosition);
+    PVector currentPos = new PVector(mouseX, mouseY, sigPenPosition);
 
     if(PVector.dist(currentPos,sketchPoints.get(sketchPoints.size()-1)) > lineMinLength){
       sketchPoints.add(currentPos);

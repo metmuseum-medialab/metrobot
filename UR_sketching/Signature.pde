@@ -9,6 +9,7 @@ class Signature {
   //ArrayList<PVector> robotSketchPoints = new ArrayList<PVector>();
   
   float DEFAULT_PREVIEW_SCALE = 1.0;
+  float SIGNATURE_PREVIEW_SCALE = .5;
   float density = 0;
 
   int signatureSize;
@@ -20,7 +21,7 @@ class Signature {
     //Normalize location
     for (int i=0; i<_sketchPoints.size(); i++)
     {
-       sketchPoints.add(new PVector(_sketchPoints.get(i).x - vSignatureDrawingSpace.x, _sketchPoints.get(i).y - vSignatureDrawingSpace.y, _sketchPoints.get(i).z));
+       sketchPoints.add(new PVector( SIGNATURE_PREVIEW_SCALE*(_sketchPoints.get(i).x - vSignatureDrawingSpace.x), SIGNATURE_PREVIEW_SCALE*(_sketchPoints.get(i).y - vSignatureDrawingSpace.y), _sketchPoints.get(i).z));
        //sketchPoints.add(new PVector(_sketchPoints.get(i).x - vSignatureDrawingSpace.x , _sketchPoints.get(i).y - vSignatureDrawingSpace.y));
     }
     //sketchPoints = (ArrayList<PVector>)_sketchPoints.clone();
