@@ -8,7 +8,7 @@ void ofApp::setup(){
     ofEnableAlphaBlending();
     //fbo.clear();
     fbo.begin();
-     ofClear(255,255,255, 0);
+    ofClear(255,255,255, 0);
     fbo.end();
     
     erase_btn.load("erase.png");
@@ -25,12 +25,12 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
+    
     
     
     
@@ -78,13 +78,13 @@ void ofApp::draw(){
         
         
     }
-     ofSetColor(255);
+    ofSetColor(255);
     fbo.begin();
     
     ofSetColor(0,0,0);
     meshy.draw();
     ofSetColor(100,100,100);
-  //  meshy.drawWireframe();
+    //  meshy.drawWireframe();
     fbo.end();
     
     
@@ -98,43 +98,43 @@ void ofApp::draw(){
     
     
     ofSetColor(255);
-
+    
     erase_btn.draw(erase_offset.x, erase_offset.y, button_dimensions.x, button_dimensions.y);
     apply_btn.draw(apply_offset.x, apply_offset.y, button_dimensions.x, button_dimensions.y);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-line.addVertex(ofPoint(x,y));
+    line.addVertex(ofPoint(x,y));
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-// line.clear();
+    // line.clear();
     
     if(x>erase_offset.x&&x<erase_offset.x+button_dimensions.x){
-
+        
         if(y>erase_offset.y&&y<erase_offset.y+button_dimensions.y){
             fbo.begin();
             ofClear(255,255,255, 0);
             fbo.end();
         }
-
+        
     }
     
     if(x>apply_offset.x&&x<apply_offset.x+button_dimensions.x){
@@ -156,9 +156,9 @@ void ofApp::mousePressed(int x, int y, int button){
             m.addStringArg("new_line");
             for (int i = 0;  i < signature.size(); i++){
                 cout<<signature[i].x<<" "<<signature[i].y<<" "<<signature[i].z<<endl;
-                 m.addStringArg("["+ofToString(signature[i].x)+","+ofToString(signature[i].y)+","+ofToString(signature[i].z)+"]");
+                m.addStringArg("["+ofToString(signature[i].x)+","+ofToString(signature[i].y)+","+ofToString(signature[i].z)+"]");
                 if(signature[i].x==-1) m.addStringArg("new_line");
-              
+                
             }
             m.addStringArg("msg_end");
             
@@ -200,33 +200,33 @@ void ofApp::mouseReleased(int x, int y, int button){
     for (int i = 0;  i < signature.size(); i++){
         cout<<signature[i].x<<" "<<signature[i].y<<" "<<signature[i].z<<endl;
     }
-     line= ofPolyline();
-  //  lines.push_back(line);
-   
+    line= ofPolyline();
+    //  lines.push_back(line);
+    
     
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
+    
 }

@@ -209,8 +209,9 @@ void draw() {
              delay(100);
           }else{
             
+            
            placeSignature();
-            delay(5000);
+            delay(2000);
             stays_on_place=0;
           }
           
