@@ -10,7 +10,7 @@ import oscP5.*;
 final static int APP_WIDTH = 500;
 final static int APP_HEIGHT = 500;
 
-final boolean MODE_TESTING = true;
+final boolean MODE_TESTING = false;
 final boolean MODE_QUEUE = true;
 final boolean OSC_LISTEN = false;
 final boolean LOAD_STATE = false;
@@ -78,6 +78,9 @@ boolean sigFirstTouch = false; //have we started drawing?
 int sigPenPosition = 1;
 
 boolean PLACING_SIGNATURE = false;
+
+
+int stays_on_place=0;
 
 
 OscP5 oscP5;
@@ -201,11 +204,21 @@ void draw() {
           println("penspeed is < 0.001");
           
           //draw next
-          placeSignature();
-          delay(5000);
+          if(stays_on_place<10){
+            stays_on_place++;
+             delay(100);
+          }else{
+            
+           placeSignature();
+            delay(5000);
+            stays_on_place=0;
+          }
+          
+         
           println("Speed ==== " + ur.getRobotTotalSpeed());
         } else {
           delay(100);
+            println("Speed ==== " + ur.getRobotTotalSpeed());
         }
       } else {
         placeSignature();

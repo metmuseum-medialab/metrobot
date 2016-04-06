@@ -16,7 +16,7 @@ class URCom {
   float v = 50; //the speed of our tool in mm/s
   float zone = 1; //the blend radius of our tool in mm
   float scaledV = .1; //the speed of our tool in m/s
-  float scaledZone = .0051; //the blend radius of our tool in m
+  float scaledZone = .0011; //the blend radius of our tool in m
   Pose [] moveLBuffer; //an array of movements that we store to send a chunk all at once
 
   float zLift = 10;  //distance to lift between drawings
@@ -258,8 +258,8 @@ void displayDouble(String title, double doubleVal, int left, int top){
     PVector aboveLastPt = new PVector(_sketchPoints.get(_sketchPoints.size()-1).x,_sketchPoints.get(_sketchPoints.size()-1).y,_sketchPoints.get(_sketchPoints.size()-1).z+zLiftOut);
     Pose aboveFirstPose = new Pose();
     Pose aboveLastPose = new Pose();
-    aboveFirstPose.fromTargetAndGuide(aboveFirstPt,new PVector(0,0,-1));
-    aboveLastPose.fromTargetAndGuide(aboveLastPt,new PVector(0,0,-1));
+    aboveFirstPose.fromTargetAndGuide(aboveFirstPt,new PVector(0,0,-2));
+    aboveLastPose.fromTargetAndGuide(aboveLastPt,new PVector(0,0,-2));
     poseArray[0] = aboveFirstPose;
     
     println("DEBUG LAST POINT : "+ _sketchPoints.size());
@@ -271,7 +271,7 @@ void displayDouble(String title, double doubleVal, int left, int top){
       Pose target = new Pose();//creat a new target pose
       
       
-      target.fromTargetAndGuide(_sketchPoints.get(i), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
+      target.fromTargetAndGuide(_sketchPoints.get(i), new PVector(0,0,-2)); //set our pose based on the position we want to be at, and the z axis of our tool
       poseArray[i+1] = target;
     }
     bufferedMoveL(poseArray,openingLines,closingLines); //make our drawing happen!
