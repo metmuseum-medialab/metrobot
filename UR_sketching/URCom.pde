@@ -19,8 +19,8 @@ class URCom {
   float scaledZone = .0011; //the blend radius of our tool in m
   Pose [] moveLBuffer; //an array of movements that we store to send a chunk all at once
 
-  float zLift = 10;  //distance to lift between drawings
-  float zLiftOut = 20;
+  float zLift = 100;  //distance to lift between drawings
+  float zLiftOut = 100;
 
   String openingLines = "def urscript():\nsleep(3)\n"; //in case we want to send more data than just movements, put that text here
   String closingLines = "\nend\n"; //closing lines for the end of what we send
@@ -247,34 +247,44 @@ void displayDouble(String title, double doubleVal, int left, int top){
   }
 
 
-  //SEND POINTS TO UR
+ //SEND POINTS TO UR
   void sendPoints(ArrayList<PVector> _sketchPoints)
   {
+    //=========================MAKE COPY OF ARRAY WITH LIFT POINTS===============================
+    ArrayList<PVector> sendWithLift = new ArrayList<PVector>();
+    for(int i=0; i<_sketchPoints.size(); i++){
+      if(i == 0){
+        PVector startPt = new PVector(_sketchPoints.get(i).x,_sketchPoints.get(i).y,zLift);
+        sendWithLift.add(startPt);
+      }
+      else if(_sketchPoints.get(i).z < 1.1 && _sketchPoints.get(i).z > .9){
+        PVector curvePt = new PVector(_sketchPoints.get(i).x,_sketchPoints.get(i).y,0);
+        sendWithLift.add(curvePt);
+      }
+      if(_sketchPoints.get(i).z > -1.1 && _sketchPoints.get(i).z < -.9){
+        sendWithLift.add(new PVector(_sketchPoints.get(i).x,_sketchPoints.get(i).y,zLift));
+        if(i < _sketchPoints.size()-2){
+          sendWithLift.add(new PVector(_sketchPoints.get(i+1).x,_sketchPoints.get(i+1).y,zLift));
+        }
+      }
+      if(i ==_sketchPoints.size()-1){
+        sendWithLift.add(new PVector(_sketchPoints.get(i).x,_sketchPoints.get(i).y,zLift));
+      
+      }
+    }
+    ///============================END MAKE COPY OF ARRAY WITH LIFT POINTS
     //send the list of target points when the mouse is clicked
-    Pose [] poseArray = new Pose[_sketchPoints.size() + 2]; //CREATE A POSE ARRAY TO HOLD ALL OF OUR DRAWING SEQUENCE
-    
-    ///ADD THE LIFT POINTS TO THE BEGINNING AND END OF THE POSE ARRAY
-    PVector aboveFirstPt = new PVector(_sketchPoints.get(0).x,_sketchPoints.get(0).y,_sketchPoints.get(0).z+zLift);
-    PVector aboveLastPt = new PVector(_sketchPoints.get(_sketchPoints.size()-1).x,_sketchPoints.get(_sketchPoints.size()-1).y,_sketchPoints.get(_sketchPoints.size()-1).z+zLiftOut);
-    Pose aboveFirstPose = new Pose();
-    Pose aboveLastPose = new Pose();
-    aboveFirstPose.fromTargetAndGuide(aboveFirstPt,new PVector(0,0,-2));
-    aboveLastPose.fromTargetAndGuide(aboveLastPt,new PVector(0,0,-2));
-    poseArray[0] = aboveFirstPose;
-    
-    println("DEBUG LAST POINT : "+ _sketchPoints.size());
-    
-    poseArray[_sketchPoints.size() + 1] = aboveLastPose; //something is off here...the above point isn't getting added...no time to debug...
-    
+    Pose [] poseArray = new Pose[sendWithLift.size()]; //CREATE A POSE ARRAY TO HOLD ALL OF OUR DRAWING SEQUENCE
+
     ///ADD ALL THE ACTUAL SKETCH POINTS TO OUR POSE ARRAY
-    for(int i = 0; i< _sketchPoints.size(); i++){ //for each point in our arraylist
+    println("================printingz===============");
+    for(int i = 0; i< sendWithLift.size(); i++){ //for each point in our arraylist
       Pose target = new Pose();//creat a new target pose
+      //println(sendWithLift.get(i).z);
       
-      
-      target.fromTargetAndGuide(_sketchPoints.get(i), new PVector(0,0,-2)); //set our pose based on the position we want to be at, and the z axis of our tool
-      poseArray[i+1] = target;
+      target.fromTargetAndGuide(sendWithLift.get(i), new PVector(0,0,-1)); //set our pose based on the position we want to be at, and the z axis of our tool
+      poseArray[i] = target;
     }
     bufferedMoveL(poseArray,openingLines,closingLines); //make our drawing happen!
   }
-    
 }//end URCom Class
