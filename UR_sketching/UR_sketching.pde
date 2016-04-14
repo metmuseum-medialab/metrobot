@@ -443,7 +443,7 @@ void oscEvent(OscMessage _osc) {
 
   String _type = _osc.typetag();
 
-  int _z = -1;
+  int _z = 1;
 
   for (int i=0; i<_type.length(); i++)
   {
@@ -452,9 +452,14 @@ void oscEvent(OscMessage _osc) {
         String _msg = _osc.get(i).toString();
         String[] _arrPoints = split(_msg,",");
         
-        println("out>" + _msg);
-        if (_msg == "new_line") {
+        println("out>" + _msg + "<");
+        println("out>" + _msg.length() + "<");
+
+        //string compare
+        if (_msg.length() == 8) {
+        //if (_msg.toString() == "new_line") {
           _z = -1;
+          println("Z>" + _z);
         } else if (_arrPoints.length>1) {
         
         for (int j=0; j<_arrPoints.length; j=j+3)
@@ -464,8 +469,8 @@ void oscEvent(OscMessage _osc) {
             if (float(_arrPoints[0]) > 1) { _arrPoints[j]="1";}
             if (float(_arrPoints[1]) > 1) { _arrPoints[j]="1";}
             
-           //oscSketchPoints.add(new PVector( (float(_arrPoints[j])*SIGNATURE_SIZE+vSignatureDrawingSpace.x), (float(_arrPoints[j+1])*SIGNATURE_SIZE + vSignatureDrawingSpace.y) ));  
-           println("Add : " + _arrPoints[0] + "," + _arrPoints[01] + "," + _z + " " +(float(_arrPoints[0])*SIGNATURE_SIZE+SIGNATURE_SIZE + vSignatureDrawingSpace.x) + "," + (float(_arrPoints[1])*SIGNATURE_SIZE + vSignatureDrawingSpace.y));
+           oscSketchPoints.add(new PVector( (float(_arrPoints[j])*SIGNATURE_SIZE+vSignatureDrawingSpace.x), (float(_arrPoints[j+1])*SIGNATURE_SIZE + vSignatureDrawingSpace.y), _z ));  
+           println("Add : " + (float(_arrPoints[0])*SIGNATURE_SIZE+SIGNATURE_SIZE + vSignatureDrawingSpace.x) + "," + (float(_arrPoints[1])*SIGNATURE_SIZE + vSignatureDrawingSpace.y) + "," + _z);
           
            /*  
            if (float(_arrPoints[j]) < 0) { _arrPoints[j]="0";}
