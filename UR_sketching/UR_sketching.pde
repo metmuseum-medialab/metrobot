@@ -10,9 +10,9 @@ import oscP5.*;
 final static int APP_WIDTH = 500;
 final static int APP_HEIGHT = 500;
 
-final boolean MODE_TESTING = false;
+final boolean MODE_TESTING = true;
 final boolean MODE_QUEUE = true;
-final boolean OSC_LISTEN = false;
+final boolean OSC_LISTEN = true;
 final boolean LOAD_STATE = false;
 final boolean SAVE_STATE = false;
 
@@ -425,7 +425,8 @@ void oscEvent(OscMessage _osc) {
   println(" typetag: "+_osc.typetag());
 
   String _type = _osc.typetag();
-  
+  int _z = -1;
+
   for (int i=0; i<_type.length(); i++)
   {
      if ( i>0 && _type.charAt(i) == 's')
@@ -433,19 +434,37 @@ void oscEvent(OscMessage _osc) {
         String _msg = _osc.get(i).toString();
         String[] _arrPoints = split(_msg,",");
         
+        println("out>" + _msg);
+        if (_msg == "new_line") {
+          _z = -1;
+        } else if (_arrPoints.length>1) {
+        
         for (int j=0; j<_arrPoints.length; j=j+3)
         {
-           
+          if (float(_arrPoints[0]) > 0 && float(_arrPoints[1]) > 0)
+          {
+            if (float(_arrPoints[0]) > 1) { _arrPoints[j]="1";}
+            if (float(_arrPoints[1]) > 1) { _arrPoints[j]="1";}
+            
+           //oscSketchPoints.add(new PVector( (float(_arrPoints[j])*SIGNATURE_SIZE+vSignatureDrawingSpace.x), (float(_arrPoints[j+1])*SIGNATURE_SIZE + vSignatureDrawingSpace.y) ));  
+           println("Add : " + _arrPoints[0] + "," + _arrPoints[01] + "," + _z + " " +(float(_arrPoints[0])*SIGNATURE_SIZE+SIGNATURE_SIZE + vSignatureDrawingSpace.x) + "," + (float(_arrPoints[1])*SIGNATURE_SIZE + vSignatureDrawingSpace.y));
+          
+           /*  
            if (float(_arrPoints[j]) < 0) { _arrPoints[j]="0";}
            if (float(_arrPoints[j]) > 1) { _arrPoints[j]="1";}
            
            if (float(_arrPoints[j+1]) < 0) { _arrPoints[j]="0";}
            if (float(_arrPoints[j+1]) > 1) { _arrPoints[j]="1";}
            
-           oscSketchPoints.add(new PVector( (float(_arrPoints[j])*SIGNATURE_SIZE+vSignatureDrawingSpace.x), (float(_arrPoints[j+1])*SIGNATURE_SIZE + vSignatureDrawingSpace.y) )); 
+           //oscSketchPoints.add(new PVector( (float(_arrPoints[j])*SIGNATURE_SIZE+vSignatureDrawingSpace.x), (float(_arrPoints[j+1])*SIGNATURE_SIZE + vSignatureDrawingSpace.y) )); 
            
-           println("Add : " + _arrPoints[j] + "," + _arrPoints[j+1] + " " +(float(_arrPoints[j])*SIGNATURE_SIZE+SIGNATURE_SIZE + vSignatureDrawingSpace.x) + "," + (float(_arrPoints[j+1])*SIGNATURE_SIZE + vSignatureDrawingSpace.y));
+           println("Add : " + _arrPoints[j] + "," + _arrPoints[j+1] + "," + _z + " " +(float(_arrPoints[j])*SIGNATURE_SIZE+SIGNATURE_SIZE + vSignatureDrawingSpace.x) + "," + (float(_arrPoints[j+1])*SIGNATURE_SIZE + vSignatureDrawingSpace.y));
+          */
+          }
         }
+            _z = 1;
+        }
+      
      }
   }
  
